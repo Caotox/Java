@@ -21,7 +21,7 @@ public abstract class Collaborateur {
 
     private static final Logger logger = LoggerFactory.getLogger(Collaborateur.class);
 
-    /** Clé primaire : l'identifiant métier (C001...). */
+    // Clé primaire (id)
     @Id
     @Column(length = 10)
     private String identifiant;
@@ -47,7 +47,6 @@ public abstract class Collaborateur {
     @JoinColumn(name = "adresse_id", nullable = false)
     private Adresse adresse;
 
-    /** Constructeur sans argument exigé par JPA. */
     protected Collaborateur() { }
 
     protected Collaborateur(
@@ -73,7 +72,6 @@ public abstract class Collaborateur {
 
     // --- Comportements ---
 
-    /** Augmente le salaire du pourcentage donné. Ignoré si le pourcentage est négatif ou nul. */
     public void augmenterSalaire(double pourcentage) {
         double avant = salaire;
         if (pourcentage > 0) {
@@ -82,10 +80,8 @@ public abstract class Collaborateur {
         logger.debug("Salaire : {} -> {}", avant, salaire); // détail pour l'analyse
     }
 
-    /** Chaque sous-classe définit son propre métier (utilisé dans afficherFiche et toString). */
     public abstract String getMetier();
 
-    /** Chaque sous-classe définit sa manière de travailler. */
     public abstract void travailler();
 
     public void afficherFiche() {
@@ -112,7 +108,7 @@ public abstract class Collaborateur {
         return Objects.hash(identifiant);
     }
 
-    /** Représentation compacte sur une ligne (utilisée dans les listes). */
+    // pertinent ?
     @Override
     public String toString() {
         return String.format("[%s] %s %s (%s) - %.2f €",

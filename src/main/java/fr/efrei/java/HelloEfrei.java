@@ -106,7 +106,6 @@ public class HelloEfrei {
         System.out.print("Votre choix : ");
     }
 
-    /** Option 9 : augmentation de salaire, enregistrée en base (mission 7). */
     private static void augmenterSalaire(Scanner scanner, CollaborateurService service) {
         System.out.print("Identifiant du collaborateur : ");
         String id = scanner.nextLine();
@@ -140,10 +139,6 @@ public class HelloEfrei {
         System.out.printf("Salaire : %.2f € -> %.2f €%n", avant.getSalaire(), apres.getSalaire());
     }
 
-    /**
-     * Option 10 : demande les informations d'un testeur et l'enregistre en base.
-     * C'est ici (code qui dialogue avec l'utilisateur) qu'on intercepte l'exception métier.
-     */
     private static void ajouterTesteur(Scanner scanner, CollaborateurService service) {
         System.out.print("Identifiant (ex. C021) : ");
         String id = scanner.nextLine();

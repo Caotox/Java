@@ -18,10 +18,6 @@ public class CollaborateurService {
         this.fabrique = fabrique;
     }
 
-    // =========================================================================
-    // Mission 6 — persist et find
-    // =========================================================================
-
     public void ajouter(Collaborateur collaborateur) {
         // try (...) : l'EntityManager est fermé automatiquement à la fin du bloc
         try (EntityManager em = fabrique.createEntityManager()) {
@@ -76,10 +72,6 @@ public class CollaborateurService {
         }
     }
 
-    // =========================================================================
-    // Mission 7 — modifier une entité gérée (pas d'UPDATE écrit à la main)
-    // =========================================================================
-
     public Collaborateur augmenterSalaire(String identifiant, double pourcentage) {
         try (EntityManager em = fabrique.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
@@ -107,12 +99,6 @@ public class CollaborateurService {
             }
         }
     }
-
-    // =========================================================================
-    // Mission 8 — requêtes JPQL
-    // Dans une requête JPQL, "Collaborateur", "salaire", "nom"... sont des noms
-    // de CLASSE et d'ATTRIBUTS Java, pas des noms de table ou de colonne.
-    // =========================================================================
 
     public List<Collaborateur> salaireSuperieurA(double seuil) {
         try (EntityManager em = fabrique.createEntityManager()) {

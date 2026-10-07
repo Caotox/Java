@@ -8,7 +8,6 @@ public class CollaborateurDejaExistantException extends RuntimeException {
         this.identifiant = identifiant;
     }
 
-
     public String identifiant() {
         return identifiant;
     }
