@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Classe pédagogique — Explorations des Collections Java.
- *
- * Quatre missions progressives pour illustrer les notions clés du TP3 :
- *   Mission 1 : List et généricité
- *   Mission 2 : Recherche dans une liste (complexité O(n))
- *   Mission 3 : Égalité logique avec equals() et hashCode()
- *   Mission 4 : Map — accès direct par clé en O(1)
- */
+ *  * Classe pédagogique — Explorations des Collections Java.
+ *  *
+ *  * Quatre missions progressives pour illustrer les notions clés du TP3 :
+ *  *   Mission 1 : List et généricité
+ *  *   Mission 2 : Recherche dans une liste (complexité O(n))
+ *  *   Mission 3 : Égalité logique avec equals() et hashCode()
+ *  *   Mission 4 : Map — accès direct par clé en O(1)
+ *  */
 public class ExplorationsCollections {
 
     public static void main(String[] args) {

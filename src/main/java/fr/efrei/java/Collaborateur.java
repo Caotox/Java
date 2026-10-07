@@ -1,23 +1,27 @@
 package fr.efrei.java;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-/**
- * Classe abstraite représentant un collaborateur de l'entreprise.
- *
- * TP3 : extension du TP2 avec l'ajout d'un identifiant unique,
- * du contrat equals()/hashCode() basé sur cet identifiant,
- * et d'une méthode abstraite getMetier() pour les affichages polymorphes.
- */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "metier")
 public abstract class Collaborateur {
 
+    private static final Logger logger = LoggerFactory.getLogger(Collaborateur.class);
+
+    /** Clé primaire : l'identifiant métier (C001...). */
     @Id
     @Column(length = 10)
     private String identifiant;
@@ -31,12 +35,21 @@ public abstract class Collaborateur {
     @Column(nullable = false)
     private double salaire;
 
-    @Transient
+    /**
+     * Mission 9 : relation vers Adresse.
+     *
+     * @ManyToOne  : PLUSIEURS collaborateurs peuvent avoir UNE même adresse.
+     * cascade     : persister un collaborateur enregistre aussi son adresse si elle est nouvelle.
+     * @JoinColumn : la clé étrangère est la colonne "adresse_id" de la table des collaborateurs.
+     *               nullable = false : un collaborateur a toujours une adresse.
+     */
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "adresse_id", nullable = false)
     private Adresse adresse;
 
-    private static final Logger logger = LoggerFactory.getLogger(Collaborateur.class);
-
+    /** Constructeur sans argument exigé par JPA. */
     protected Collaborateur() { }
+
     protected Collaborateur(
             String identifiant,
             String prenom,
@@ -62,10 +75,11 @@ public abstract class Collaborateur {
 
     /** Augmente le salaire du pourcentage donné. Ignoré si le pourcentage est négatif ou nul. */
     public void augmenterSalaire(double pourcentage) {
+        double avant = salaire;
         if (pourcentage > 0) {
             salaire = salaire * (1 + pourcentage / 100);
         }
-        logger.debug("Salaire : {} -> {}", getSalaire(), this.salaire); // détail pour l'analyse
+        logger.debug("Salaire : {} -> {}", avant, salaire); // détail pour l'analyse
     }
 
     /** Chaque sous-classe définit son propre métier (utilisé dans afficherFiche et toString). */
@@ -74,24 +88,18 @@ public abstract class Collaborateur {
     /** Chaque sous-classe définit sa manière de travailler. */
     public abstract void travailler();
 
-    /**
-     * Affichage détaillé de la fiche du collaborateur (multiligne).
-     * Les sous-classes peuvent surcharger pour ajouter leurs propres informations.
-     */
     public void afficherFiche() {
         System.out.println("[" + identifiant + "] " + prenom + " " + nom);
         System.out.println("Métier  : " + getMetier());
         System.out.println("Salaire : " + salaire + " €");
-        System.out.println("fr.efrei.java.Adresse :");
-        adresse.afficher();
+        if (adresse != null) {
+            System.out.println("Adresse :");
+            adresse.afficher();
+        }
     }
 
     // --- Contrat equals/hashCode basé sur l'identifiant (TP3) ---
 
-    /**
-     * Deux collaborateurs sont logiquement égaux s'ils partagent le même identifiant.
-     * Cela permet un comportement correct dans les collections (Set, Map, contains...).
-     */
     @Override
     public boolean equals(Object autre) {
         if (this == autre) return true;

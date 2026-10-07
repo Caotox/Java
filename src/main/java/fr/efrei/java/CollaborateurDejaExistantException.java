@@ -9,7 +9,7 @@ public class CollaborateurDejaExistantException extends RuntimeException {
     }
 
 
-    public String getIdentifiant() {
+    public String identifiant() {
         return identifiant;
     }
 }

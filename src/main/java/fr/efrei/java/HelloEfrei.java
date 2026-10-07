@@ -1,33 +1,22 @@
 package fr.efrei.java;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Point d'entrée de l'application — fr.efrei.java.Annuaire des collaborateurs.
- *
- * Reprend la structure du fr.efrei.java.HelloEfrei du TP1 :
- *   - méthode afficherMenu() statique
- *   - méthodes utilitaires statiques (afficherListe, saisirIdentifiant...)
- *   - boucle principale avec validation hasNextInt() + switch fléché
- */
 public class HelloEfrei {
 
     public static void main(String[] args) {
 
-        // --- Initialisation de l'annuaire avec les données de démonstration ---
-        Annuaire annuaire = new Annuaire();
-        for (Collaborateur c : DonneesDemo.creerCollaborateurs()) {
-            try {
-                //annuaire.ajouter(c);
-                /* annuaire.ajouter(5); -> type incohérent (la fonction attends le type fr.efrei.java.Collaborateur, ici l'argument est un int (Integer))
-                 annuaire.ajouter(bob); -> on appelle la fonction avec un objet du bon type mais qui n'existe pas
-                Dans les 2 cas, le programme va planter lors de la compilation */
-                //annuaire.ajouter(new Testeur("C021", "Tom","Gonzalez",  38500, new Adresse("7 place Bellecour", "69002", "Lyon", "France")));
-            } catch (CollaborateurDejaExistantException e) {
-                System.out.println("Impossible : l'identifiant " + e.getIdentifiant() + " est déjà utilisé.");
-            }
-        }
+        // Une seule fabrique pour toute l'application (elle est coûteuse à créer)
+        EntityManagerFactory fabrique = Persistence.createEntityManagerFactory("collaborateurs-pu");
+        CollaborateurService service = new CollaborateurService(fabrique);
+
+        // Données de démonstration : seuls les collaborateurs absents de la base sont ajoutés
+        service.initialiser(DonneesDemo.creerCollaborateurs());
+
         Scanner scanner = new Scanner(System.in);
         int choix = -1;
 
@@ -41,12 +30,12 @@ public class HelloEfrei {
                 switch (choix) {
                     case 0 -> System.out.println("À bientôt !");
 
-                    case 1 -> afficherListe(annuaire.tous());
+                    case 1 -> afficherListe(service.tous());
 
                     case 2 -> {
                         System.out.print("Fragment de nom : ");
                         String fragment = scanner.nextLine();
-                        afficherListe(annuaire.nomContenant(fragment));
+                        afficherListe(service.nomContenant(fragment));
                     }
 
                     case 3 -> {
@@ -54,56 +43,38 @@ public class HelloEfrei {
                         if (scanner.hasNextDouble()) {
                             double seuil = scanner.nextDouble();
                             scanner.nextLine();
-                            afficherListe(annuaire.salaireSuperieurA(seuil));
+                            afficherListe(service.salaireSuperieurA(seuil));
                         } else {
                             System.out.println("Saisie invalide.");
                             scanner.nextLine();
                         }
                     }
 
-                    case 4 -> afficherListe(annuaire.programmeurs());
+                    case 4 -> afficherListe(service.programmeurs());
 
-                    case 5 -> afficherListe(annuaire.triesParNom());
+                    case 5 -> afficherListe(service.triesParNom());
 
-                    case 6 -> afficherListe(annuaire.triesParSalaire());
+                    case 6 -> afficherListe(service.triesParSalaire());
 
-                    case 7 -> afficherListe(annuaire.triesParNomPuisPrenom());
+                    case 7 -> afficherListe(service.triesParNomPuisPrenom());
 
                     case 8 -> {
                         System.out.print("Identifiant du collaborateur : ");
                         String id = scanner.nextLine();
-                        Collaborateur trouve = annuaire.trouver(id);
+                        Collaborateur trouve = service.trouver(id);
                         if (trouve != null) {
                             System.out.println();
                             trouve.afficherFiche();
                         } else {
-                            System.out.println("fr.efrei.java.Collaborateur introuvable : " + id);
+                            System.out.println("Collaborateur introuvable : " + id);
                         }
                     }
 
-                    case 9 -> {
-                        System.out.print("Identifiant du collaborateur : ");
-                        String id = scanner.nextLine();
-                        Collaborateur trouve = annuaire.trouver(id);
-                        if (trouve != null) {
-                            System.out.print("Pourcentage d'augmentation : ");
-                            if (scanner.hasNextDouble()) {
-                                double pourcentage = scanner.nextDouble();
-                                scanner.nextLine();
-                                double ancienSalaire = trouve.getSalaire();
-                                trouve.augmenterSalaire(pourcentage);
-                                System.out.printf("Salaire : %.2f € -> %.2f €%n",
-                                        ancienSalaire, trouve.getSalaire());
-                            } else {
-                                System.out.println("Saisie invalide.");
-                                scanner.nextLine();
-                            }
-                        } else {
-                            System.out.println("fr.efrei.java.Collaborateur introuvable : " + id);
-                        }
-                    }
+                    case 9 -> augmenterSalaire(scanner, service);
 
-                    default -> System.out.println("Option invalide. Choisissez entre 0 et 9.");
+                    case 10 -> ajouterTesteur(scanner, service);
+
+                    default -> System.out.println("Option invalide. Choisissez entre 0 et 10.");
                 }
 
             } else {
@@ -113,13 +84,14 @@ public class HelloEfrei {
         }
 
         scanner.close();
+        fabrique.close(); // on ferme la fabrique en quittant
     }
 
     // --- Méthodes statiques utilitaires ---
 
     private static void afficherMenu() {
         System.out.println();
-        System.out.println("=== fr.efrei.java.Annuaire des collaborateurs (" + "EFREI" + ") ===");
+        System.out.println("=== Annuaire des collaborateurs (EFREI) ===");
         System.out.println("1. Afficher tous les collaborateurs");
         System.out.println("2. Rechercher par nom");
         System.out.println("3. Filtrer par salaire minimum");
@@ -129,15 +101,87 @@ public class HelloEfrei {
         System.out.println("7. Trier par nom puis prénom");
         System.out.println("8. Afficher la fiche d'un collaborateur");
         System.out.println("9. Augmenter le salaire d'un collaborateur");
+        System.out.println("10. Ajouter un testeur");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
 
+    /** Option 9 : augmentation de salaire, enregistrée en base (mission 7). */
+    private static void augmenterSalaire(Scanner scanner, CollaborateurService service) {
+        System.out.print("Identifiant du collaborateur : ");
+        String id = scanner.nextLine();
+
+        Collaborateur avant = service.trouver(id);
+        if (avant == null) {
+            System.out.println("Collaborateur introuvable : " + id);
+            return;
+        }
+
+        System.out.print("Pourcentage d'augmentation : ");
+        if (!scanner.hasNextDouble()) {
+            System.out.println("Saisie invalide.");
+            scanner.nextLine();
+            return;
+        }
+        double pourcentage = scanner.nextDouble();
+        scanner.nextLine();
+
+        if (pourcentage <= 0) {
+            System.out.println("Le pourcentage doit être strictement positif.");
+            return;
+        }
+
+        Collaborateur apres = service.augmenterSalaire(id, pourcentage);
+
+        // 7.3 : décommenter la ligne suivante. L'EntityManager est déjà fermé,
+        //       "apres" est donc une entité détachée : la base ne changera pas.
+        // apres.augmenterSalaire(pourcentage);
+
+        System.out.printf("Salaire : %.2f € -> %.2f €%n", avant.getSalaire(), apres.getSalaire());
+    }
+
     /**
-     * Affiche une liste de collaborateurs.
-     * Utilise List<? extends fr.efrei.java.Collaborateur> pour accepter aussi bien
-     * List<fr.efrei.java.Collaborateur> que List<fr.efrei.java.Programmeur> (covariance via wildcard borné).
+     * Option 10 : demande les informations d'un testeur et l'enregistre en base.
+     * C'est ici (code qui dialogue avec l'utilisateur) qu'on intercepte l'exception métier.
      */
+    private static void ajouterTesteur(Scanner scanner, CollaborateurService service) {
+        System.out.print("Identifiant (ex. C021) : ");
+        String id = scanner.nextLine();
+        System.out.print("Prénom : ");
+        String prenom = scanner.nextLine();
+        System.out.print("Nom : ");
+        String nom = scanner.nextLine();
+
+        System.out.print("Salaire (€) : ");
+        if (!scanner.hasNextDouble()) {
+            System.out.println("Saisie invalide.");
+            scanner.nextLine();
+            return;
+        }
+        double salaire = scanner.nextDouble();
+        scanner.nextLine();
+
+        // Mission 9 : un collaborateur a toujours une adresse
+        System.out.print("Rue : ");
+        String rue = scanner.nextLine();
+        System.out.print("Code postal : ");
+        String codePostal = scanner.nextLine();
+        System.out.print("Ville : ");
+        String ville = scanner.nextLine();
+        System.out.print("Pays : ");
+        String pays = scanner.nextLine();
+
+        Adresse adresse = new Adresse(rue, codePostal, ville, pays);
+        Testeur testeur = new Testeur(id, prenom, nom, salaire, adresse);
+
+        try {
+            service.ajouter(testeur); // l'adresse est enregistrée en même temps (cascade)
+            System.out.println("Collaborateur " + id + " enregistré.");
+        } catch (CollaborateurDejaExistantException e) {
+            System.out.println("Impossible : l'identifiant " + e.identifiant() + " est déjà utilisé.");
+        }
+    }
+
     private static void afficherListe(List<? extends Collaborateur> liste) {
         if (liste.isEmpty()) {
             System.out.println("Aucun collaborateur trouvé.");
