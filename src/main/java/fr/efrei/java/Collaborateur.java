@@ -18,7 +18,16 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "metier")
 public abstract class Collaborateur {
+    /*
+    1 : plantage, donnée incohérente, règle métier violée ou comportement incorrect
+    Collaborateur sansAdresse = new Testeur("C900", "Zoe", "Test", 30000, null);
+    sansAdresse.afficherFiche();
 
+    Annuaire test3 = new Annuaire();
+    Adresse a3 = new Adresse("12 rue des Lilas", "75000", "Paris", "France");
+    test3.ajouter(new Testeur("C901", "Zoe", null, 30000, a3));
+    test3.nomContenant("mar");
+    */
     private static final Logger logger = LoggerFactory.getLogger(Collaborateur.class);
 
     // Clé primaire (id)
@@ -35,14 +44,6 @@ public abstract class Collaborateur {
     @Column(nullable = false)
     private double salaire;
 
-    /**
-     * Mission 9 : relation vers Adresse.
-     *
-     * @ManyToOne  : PLUSIEURS collaborateurs peuvent avoir UNE même adresse.
-     * cascade     : persister un collaborateur enregistre aussi son adresse si elle est nouvelle.
-     * @JoinColumn : la clé étrangère est la colonne "adresse_id" de la table des collaborateurs.
-     *               nullable = false : un collaborateur a toujours une adresse.
-     */
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "adresse_id", nullable = false)
     private Adresse adresse;

@@ -7,16 +7,19 @@
     <persistence-unit name="collaborateurs-pu" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <!-- Une ligne par entité : à compléter au fil du TP -->
+        <!-- Une ligne par entité : Adresse, la classe mère ET ses deux sous-classes -->
+        <class>fr.efrei.java.Adresse</class>
         <class>fr.efrei.java.Collaborateur</class>
         <class>fr.efrei.java.Programmeur</class>
         <class>fr.efrei.java.Testeur</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
+            <!-- MAMP : port 8889 (XAMPP : 3306) -->
             <property name="jakarta.persistence.jdbc.url"
                       value="jdbc:mariadb://localhost:8889/efrei_tp4"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <!-- MAMP : mot de passe "root" (XAMPP : vide) -->
             <property name="jakarta.persistence.jdbc.password" value="root"/>
 
             <property name="hibernate.hbm2ddl.auto" value="update"/>

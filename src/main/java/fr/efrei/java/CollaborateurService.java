@@ -22,7 +22,7 @@ public class CollaborateurService {
         // try (...) : l'EntityManager est fermé automatiquement à la fin du bloc
         try (EntityManager em = fabrique.createEntityManager()) {
 
-            // Règle métier de la mission 2 : on vérifie le doublon AVANT d'écrire
+            // Règle métier de la mission 2 : on vérifie le doublon avant d'écrire
             Collaborateur dejaPresent = em.find(Collaborateur.class, collaborateur.getIdentifiant());
             if (dejaPresent != null) {
                 logger.warn("Doublon refusé pour {}", collaborateur.getIdentifiant());
@@ -50,7 +50,8 @@ public class CollaborateurService {
         }
     }
 
-    public void initialiser(List<Collaborateur> collaborateurs) {
+    public int initialiser(List<Collaborateur> collaborateurs) {
+        int ajoutes = 0;
         try (EntityManager em = fabrique.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
@@ -58,12 +59,14 @@ public class CollaborateurService {
                 for (Collaborateur c : collaborateurs) {
                     if (em.find(Collaborateur.class, c.getIdentifiant()) == null) {
                         em.persist(c);
+                        ajoutes++;
                         logger.info("Donnée de démonstration {} enregistrée", c.getIdentifiant());
                     } else {
                         logger.debug("Donnée de démonstration {} déjà présente, ignorée", c.getIdentifiant());
                     }
                 }
                 transaction.commit();
+                return ajoutes;
             } catch (RuntimeException e) {
                 transaction.rollback();
                 logger.error("Échec de l'initialisation des données de démonstration", e);
@@ -77,21 +80,19 @@ public class CollaborateurService {
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
             try {
-                // find dans la transaction : l'objet retourné est une entité GÉRÉE
                 Collaborateur collaborateur = em.find(Collaborateur.class, identifiant);
                 if (collaborateur == null) {
                     transaction.rollback();
                     return null;
                 }
 
-                // Simple méthode métier : ni persist, ni SQL
-                // 7.3 : commenter la ligne suivante (et décommenter la ligne 7.3 dans HelloEfrei)
+                // 7.3 : commenter
                 collaborateur.augmenterSalaire(pourcentage);
 
-                // 7.4 : décommenter la ligne suivante pour faire échouer l'opération avant le commit
+                // 7.4
                 // throw new RuntimeException("Panne simulée (7.4)");
 
-                transaction.commit(); // c'est ici que Hibernate envoie l'UPDATE
+                transaction.commit();
                 return collaborateur;
             } catch (RuntimeException e) {
                 transaction.rollback();
@@ -136,10 +137,6 @@ public class CollaborateurService {
         return lister("select c from Collaborateur c order by c.nom, c.prenom");
     }
 
-    /**
-     * Uniquement les programmeurs : il suffit d'interroger la sous-classe.
-     * Hibernate ajoute lui-même le filtre sur la colonne "metier".
-     */
     public List<Programmeur> programmeurs() {
         try (EntityManager em = fabrique.createEntityManager()) {
             return em.createQuery(
@@ -149,7 +146,6 @@ public class CollaborateurService {
         }
     }
 
-    /** Méthode privée mutualisée : exécute une requête JPQL sans paramètre. */
     private List<Collaborateur> lister(String jpql) {
         try (EntityManager em = fabrique.createEntityManager()) {
             return em.createQuery(jpql, Collaborateur.class).getResultList();
