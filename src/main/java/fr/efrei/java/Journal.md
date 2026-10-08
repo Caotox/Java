@@ -38,7 +38,7 @@ règle métier → détection → exception → appelant → message utilisateur
 ```
 
 - Lors de l'ajout, si on a un id en double, on throw une new Exception (le fichier qu'on vient de créer) qui va enregistré l'identifiant à l'origine de l'erreur, et mettre en place, depuis le constructeur de la classe mère RuntimeException, le message d'erreur adapté
-- Ensuite, depuis HelloEfrei, qui intialise cet ajout, l'exception va être interceptée (depuis le catch) ce qui va déclencher l'arrêt de l'app ainsi que l'affichage du message d'erreur avec les informations de la cause de l'erreur (l'information du doublon d'id, ainsi que la valeur de cet id à l'origine du problème de doublon)
+- Ensuite, depuis HelloEfrei, qui intialise cet ajout, l'exception va être interceptée (depuis le catch) ce qui va déclencher l'affichage du message d'erreur avec les informations de la cause de l'erreur (l'information du doublon d'id, ainsi que la valeur de cet id à l'origine du problème de doublon)
 
 ### Mission 3 — Maven
 
@@ -93,13 +93,13 @@ L'idée ici est de différencier l'affichage à l'utilisateur, et l'affichage au
 
 - Tout le code JPA est dans `CollaborateurService`, qui reçoit la fabrique dans son constructeur. Cela permet de séparer les responsabilités entre les différentes couches de l'app, et surtout de centraliser la gestion Jpa. Toute opération partira du même endroit. `HelloEfrei` ne connaît donc que `service.ajouter(...)` et `service.trouver(...)` ce qui est pertinent avec l'organisation de notre projet, puisqu'il est le point d'entrée de notre app, ce n'est pas sa responsabilité de gérer la Jpa
 
-**Que retourne `find` pour `C999` ?** : `null` sans lever d'exception (pas de crash / arrêt de l'app, ce qui parait pertinent). C'est donc à l'appelant de gérer la possibilité d'un null lors d'un find, dans le cas où il n'existe pas de collaborateur pour un id donné.
+**Que retourne `find` pour `C999` ?** : `null` sans lever d'exception. C'est donc à l'appelant de gérer la possibilité d'un null lors d'un find, dans le cas où il n'existe pas de collaborateur pour un id donné.
 
 - Avant le `persist`, le service fait un `find` : si le collaborateur existe déjà, il lève `CollaborateurDejaExistantException`.
 - Ce choix s'illustre par le fait que la clé primaire ne suffit pas car elle protège les données (la base refusera toujours le doublon), mais pas l'utilisateur. Sans notre vérification, il recevrait une erreur technique d'Hibernate au moment du `commit`, incompréhensible pour lui. Notre exception métier donne un message clair, adapté à son cas d'usage.
 
 **Preuve que les données survivent** : au démarrage, on n'enregistre un collaborateur de démonstration que si `service.trouver(...)` renvoie `null` (donc si le collaborateur n'existe pas pour un id donné). Au premier lancement, 20 `insert` apparaissent. Au deuxième, aucun.
-- Toutefois, nous avons fait évoluer le modèle, en placant l'ajout des données depuis DonnesDemo dans le menu. En effet, si cette opération se fait à chaque initialisation, cela cause une opération supplémentaire parfois inutile mais couteuse, mais surtout imaginons qu'un Collaborateur change d'id, le .find() renverra alors null, ce qui aura pour effet d'ajouter à nouveau le Colaborateur à la base (avec l'id avant la modification). -> Par exemple, si on change un id de C001 à C100, lorsqu'on relancera le programme, puisque le .find() renvoie null pour C001, il va recréer ce Collaborateur
+- Toutefois, nous avons fait évoluer le modèle, en placant l'ajout des données depuis DonnesDemo dans le menu. En effet, si cette opération se fait à chaque initialisation, cela cause une opération supplémentaire parfois inutile mais couteuse, mais surtout imaginons qu'un Collaborateur change d'id (ce qui n'est pas censé arriver, on ne devrait pas pouvoir changer un id, mais imaginons que ce soit possible dans d'éventuelles évolutions de notre projet), le .find() renverra alors null, ce qui aura pour effet d'ajouter à nouveau le Colaborateur à la base (avec l'id avant la modification). -> Par exemple, si on change un id de C001 à C100, lorsqu'on relancera le programme, puisque le .find() renvoie null pour C001, il va recréer ce Collaborateur
 - Egalement, nous avons ajouté une option d'ajout de Collaborateur dans le menu. L'utilisateur peut choisir chaque champs (création de Programmeur ou de Testeur, puis valeur associée à chaque colonne) et le collaborateur sera ajouté en base.
 
 **À réfléchir : que vaut une clé comme `C001` ?**
@@ -135,7 +135,7 @@ Elle rend l'opération « tout ou rien ». Rien ne part en base avant le `commit
 
 **Variante 7.4 — échec avant le `commit`**
 
-- Avec un `throw new RuntimeException(...)` juste avant `transaction.commit()`, l'application s'arrête avec l'erreur, le salaire en base est inchangé.
+- Avec un `throw new RuntimeException(...)` juste avant `transaction.commit()`, l'erreur est remontée, le salaire en base est inchangé.
 - L'objet Java a été modifié, mais le `commit` n'a jamais eu lieu et le `catch` a fait un `rollback`.
 
 (Les deux variantes sont laissées en commentaire dans le code)
