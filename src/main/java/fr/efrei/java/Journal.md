@@ -194,4 +194,42 @@ private Adresse adresse;
 
 ### Mission 10 — Entité générée par IntelliJ (BDD → Objet)
 
-// TODO
+- Ici, il s'agit de faire le chemin inverse : au lieu d'écrire l'entité puis de laisser Hibernate créer la table, on part de la table `collaborateur_demo` et on laisse IntelliJ écrire l'entité (`CollaborateurDemo`, dans le package `fr.efrei.java.genere`)
+- La classe générée n'est pas ajoutée à `persistence.xml`, car elle sert uniquement à la comparaison avec notre `Collaborateur`
+- Notre version d'IntelliJ ne proposait pas « Generate Persistence Mapping », nous sommes donc passés par « JPA Entities from DB »
+
+**Décision 1 : la clé primaire**
+
+- L'outil garde `id_collaborateur` comme clé primaire, en `String`, sans `@GeneratedValue`
+- Je pense qu'une valeur comme `C001` a été interprétée comme ayant une signification métier, la base ne peut pas la fabriquer elle-même, ou la modifier, car elle n'a pas le contexte métier. C'est pourquoi l'outil ne met donc pas de génération automatique selon moi.
+- C'est le même choix que dans notre `Collaborateur`. On le conserve pour ce TP, mais avec les limites vues en mission 6 (une clé technique serait plus propre, comme pour `Adresse`)
+
+**Décision 2 : le type de `salaire`**
+
+- L'outil génère `Double` (l'objet), alors que nous avons écrit `double` (le primitif)
+- `Double` peut valoir `null`, `double` non. Or la colonne est `not null` en base (et l'outil le sait, puisqu'il écrit `nullable = false` juste au-dessus)
+- On ne conserve pas ce choix : un salaire est obligatoire, le primitif est donc plus cohérent, et il évite un `null` qui ferait planter `augmenterSalaire`
+
+**Décision 3 : le nommage, `@Column` et `@Table`**
+
+- L'outil convertit les noms de la base (`id_collaborateur`, `langage_prefere`, `collaborateur_demo`) en noms Java (`idCollaborateur`, `langagePrefere`, `CollaborateurDemo`)
+- Comme les noms ne correspondent plus, il écrit `@Column(name = "...")` sur chaque attribut, même quand le nom est identique (`prenom`, `nom`), et un `@Table(name = ..., schema = "efrei_tp4")` sur la classe
+- Dans ce projet, nous n'avons pas précisé les noms : nos attributs portent le même nom que les colonnes. Le choix de l'outil semble tout de même pertinent (bonnes pratiques).
+
+**Décision 4 : constructeurs et setters**
+
+- L'outil ne génère aucun constructeur, mais un getter et un setter pour chaque attribut, y compris `setIdCollaborateur` (on peut donc changer la clé primaire d'un objet Collaborateur). Selon moi, c'est pertinent du point de vue de certaines décisions prises tout le long du projet (basculer l'initialisation dans le menu pour éviter une recréation), mais d'un côté purement logique, il vaut mieux éviter de modifier la clé primaire.
+- Notre `Collaborateur` : un constructeur complet qui valide les champs, un constructeur vide `protected` réservé à Hibernate, aucun setter, et une méthode métier (`augmenterSalaire`) pour la modification prévue dans le menu
+- C'est une évolution intéressante, si notre projet prévoie d'ajouter des méthodes de modification de certains champs. Selon moi, il faudrait limiter les setters aux champs qui peuvent être amenés à changer, et ne pas en faire pour d'autre (cela me semble moins pertinent de modifier le Nom par exemple, l'ajout d'un setter semble alors peu pertinent)
+
+**Décision 5 : la colonne `metier`**
+
+- Pour l'outil, `metier` est une simple colonne `String`. Il génère une seule classe, et `langagePrefere` existe pour tout le monde, même pour un testeur
+- De notre côté, cette colonne est le discriminant (`@DiscriminatorColumn`) d'une hiérarchie avec `Programmeur` et `Testeur`
+- L'outil lit la structure de la table, il ne peut pas deviner que cette colonne sert à distinguer deux classes. On ne le conserve pas, car on perdrait le polymorphisme (`getMetier()`, `travailler()`, et colonne langagePrefere non présent selon le type de Collaborateur)
+
+**Bilan de la comparaison**
+
+- L'outil reproduit fidèlement la structure de la table : les types, les longueurs (`length = 40` pour `metier` et `langage_prefere`) et les colonnes obligatoires
+- En revanche, il ne connaît pas le sens métier : pas d'héritage, pas de règle de validation, pas de `equals` / `hashCode`, pas de méthode métier
+- C'est donc un bon point de départ pour éviter de recopier les colonnes à la main, mais le résultat doit être relu et adapté. D'où l'intérêt d'avoir écrit l'entité à la main en premier : on sait quoi corriger
