@@ -44,6 +44,8 @@ règle métier → détection → exception → appelant → message utilisateur
 
 ### Mission 3 — Maven
 
+![Maven](./images/maven.png)
+
 - groupId : fr.efrei
 - artifactId : Artifact - tp4-collaborateurs
 - version : 1.0-SNAPSHOT
@@ -55,6 +57,8 @@ Pourquoi `pom.xml` plutôt qu'un `.jar` copié ?
 - Changer de version revient à modifier une ligne.
 
 ### Mission 4 — Debugger et logs
+
+![Maven](./images/debug.png)
 
 L'idée ici est de différencier l'affichage à l'utilisateur, et l'affichage au développeur. Certaines informations ne doivent pas être visibles par l'utilisateur (potentiels problème de sécurité, failles exploitables), mais le développeur a besoin d'avoir accès à ces informations. En revanche, l'utilisateur doit tout de même avoir accès à certaines informations, comme le fait d'être mis au courant de la réussite ou de l'échec d'une opération, et avoir des informations basiques sur la cause de cet échec éventuellement.
 
