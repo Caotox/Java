@@ -2,7 +2,7 @@
 
 > Binôme : **Antoine ROCQ - Marine EL OSTA** — Package du projet : `fr.efrei.java`
 
-Notes : Utilisation de MAMP au lieu de XAMP : port 8889 utilisé
+Notes : Utilisation de MAMP au lieu de XAMPP : port 8889 utilisé
 
 ## Partie A — Fiabiliser l'application
 
@@ -11,12 +11,12 @@ Notes : Utilisation de MAMP au lieu de XAMP : port 8889 utilisé
 **Situation 1 : identifiant déjà utilisé (règle métier violée)**
 
 - Situation : Classe HelloEfrei
--> Action : créer un collaborateur sans adresse puis afficher sa fiche
-Observé : PLANTAGE, adresse.afficher() est appelé sur null
+  -> Action : créer un collaborateur sans adresse puis afficher sa fiche
+  Observé : PLANTAGE, adresse.afficher() est appelé sur null
 
 - Situation : Classe HelloEfrei  nom null
--> créer un collaborateur avec nom null puis rechercher par nom
-Observé : PLANTAGE, c.getNom().toLowerCase() sur null
+  -> créer un collaborateur avec nom null puis rechercher par nom
+  Observé : PLANTAGE, c.getNom().toLowerCase() sur null
 
 - Action : ajouter deux fois `C001`.
 - Comportement observé : l'ajout était refusé en silence (à cause du return `return false`, l'ajout ne se fait pas, mais rien ne l'indique). L'utilisateur n'était pas mis au courant de l'échec de l'ajout, ni de sa raison.
@@ -28,7 +28,7 @@ Observé : PLANTAGE, c.getNom().toLowerCase() sur null
 
 **À réfléchir : erreur de saisie ou règle métier violée ?**
 
-Ce ne sont pas le même problème. Une erreur de saisie est un problème de forme, qui se gère dans l'appelant directement (HelloEfrei) tandis qu'une erreur métier est un problème de fond, qui se gère directement dans le métier (Collaborateur...) 
+Ce n'est pas le même problème. Une erreur de saisie est un problème de forme, qui se gère dans l'appelant directement (HelloEfrei) tandis qu'une erreur métier est un problème de fond, qui se gère directement dans le métier (Collaborateur...)
 
 ### Mission 2 — `CollaborateurDejaExistantException`
 
@@ -39,8 +39,8 @@ règle métier → détection → exception → appelant → message utilisateur
    doublon      service      throw      HelloEfrei     println
 ```
 
-- Lors de l'ajout, si on a un id en double, on throw une new Exception (le fichier qu'on vient de créer) qui va enregistré l'identifiant à l'origine de l'erreur, et mettre en place, depuis le constructeur de la classe mère RuntimeException, le message d'erreur adapté
-- Ensuite, depuis HelloEfrei, qui intialise cet ajout, l'exception va être interceptée (depuis le catch) ce qui va déclencher l'affichage du message d'erreur avec les informations de la cause de l'erreur (l'information du doublon d'id, ainsi que la valeur de cet id à l'origine du problème de doublon)
+- Lors de l'ajout, si on a un id en double, on throw une new Exception (le fichier qu'on vient de créer) qui va enregistrer l'identifiant à l'origine de l'erreur, et mettre en place, depuis le constructeur de la classe mère RuntimeException, le message d'erreur adapté
+- Ensuite, depuis HelloEfrei, qui initialise cet ajout, l'exception va être interceptée (depuis le catch) ce qui va déclencher l'affichage du message d'erreur avec les informations de la cause de l'erreur (l'information du doublon d'id, ainsi que la valeur de cet id à l'origine du problème de doublon)
 
 ### Mission 3 — Maven
 
@@ -49,18 +49,18 @@ règle métier → détection → exception → appelant → message utilisateur
 - groupId : fr.efrei
 - artifactId : Artifact - tp4-collaborateurs
 - version : 1.0-SNAPSHOT
-- 
+-
 Pourquoi `pom.xml` plutôt qu'un `.jar` copié ?
 
 - Le `pom.xml` décrit ce dont le projet a besoin. Maven télécharge lui-même les bibliothèques et les dépendances, et permet de reproduire et reconstruire le même environnement, peu importe qui va utiliser le projet.
-- Avec un `.jar` copié : le dépôt grossit avec des fichiers binaires, et il faut copier et gérer soit même les dépendances.
+- Avec un `.jar` copié : le dépôt grossit avec des fichiers binaires, et il faut copier et gérer soi-même les dépendances.
 - Changer de version revient à modifier une ligne.
 
 ### Mission 4 — Debugger et logs
 
 ![Maven](./images/debug.png)
 
-L'idée ici est de différencier l'affichage à l'utilisateur, et l'affichage au développeur. Certaines informations ne doivent pas être visibles par l'utilisateur (potentiels problème de sécurité, failles exploitables), mais le développeur a besoin d'avoir accès à ces informations. En revanche, l'utilisateur doit tout de même avoir accès à certaines informations, comme le fait d'être mis au courant de la réussite ou de l'échec d'une opération, et avoir des informations basiques sur la cause de cet échec éventuellement.
+L'idée ici est de différencier l'affichage à l'utilisateur, et l'affichage au développeur. Certaines informations ne doivent pas être visibles par l'utilisateur (potentiels problèmes de sécurité, failles exploitables), mais le développeur a besoin d'avoir accès à ces informations. En revanche, l'utilisateur doit tout de même avoir accès à certaines informations, comme le fait d'être mis au courant de la réussite ou de l'échec d'une opération, et avoir des informations basiques sur la cause de cet échec éventuellement.
 
 - `System.out.println` : ce que l'utilisateur doit lire (menu, résultats, messages d'erreur compréhensibles).
 - `logger` : ce que le développeur doit savoir pour comprendre ce qui s'est passé.
@@ -74,24 +74,24 @@ L'idée ici est de différencier l'affichage à l'utilisateur, et l'affichage au
 - On va indiquer au Hibernate de surveiller : Collaborateur, Programmeur et Testeur (@Entity) (il faudra aussi penser à l'ajout d'adresse par la suite)
 - Ici, la clé primaire (@Id) sera l'identifiant
 - Au niveau des contraintes, on choisit de ne pas permettre une valeur null pour chacune des colonnes de la table, car ce n'est pas pertinent dans notre cas (aucune information ne devrait être null) -> @Column(nullable = false, length = 50)
-- On met un @Transiant sur l'adresse, car elle n'est pas gérée pour l'instant
+- On met un @Transient sur l'adresse, car elle n'est pas gérée pour l'instant
 
-- Il va donc falloir également créer des constructeurs vides pour chaque classe (si ils n'existaient pas déjà) car le Hibernate va d'abord créer des objets vides, puis y injecter des informations
+- Il va donc falloir également créer des constructeurs vides pour chaque classe (s'ils n'existaient pas déjà) car le Hibernate va d'abord créer des objets vides, puis y injecter des informations
 
 
 **Notre choix : une seule table pour toute la hiérarchie (`SINGLE_TABLE`)**
 
-- Les 2 choix étaient possible et pertinents, mais nous avons fait le choix d'une seule table, car Programmeur et Testeur sont chacun des Collaborateurs. Les inclure dans la même table permet donc de ne pas faire de jointure, et de respecter la règle métier initiale. Il faudra alors mettre en place une règle permettant de les différencier, car Programmeur, par exemple, a un attribut langagePréféré tandis qu'un testeur n'a pas cet attribut. D'autres cas similaires pourraient être ajoutés dans le futur, avec par exemple un nouvel attribut dans Testeur qui ne serait pas partagé par Programmeur. Il est donc nécessaire de les différencier en base, même si ils appartiennent à la même table. 
+- Les 2 choix étaient possibles et pertinents, mais nous avons fait le choix d'une seule table, car Programmeur et Testeur sont chacun des Collaborateurs. Les inclure dans la même table permet donc de ne pas faire de jointure, et de respecter la règle métier initiale. Il faudra alors mettre en place une règle permettant de les différencier, car Programmeur, par exemple, a un attribut langagePréféré tandis qu'un testeur n'a pas cet attribut. D'autres cas similaires pourraient être ajoutés dans le futur, avec par exemple un nouvel attribut dans Testeur qui ne serait pas partagé par Programmeur. Il est donc nécessaire de les différencier en base, même s'ils appartiennent à la même table.
 - Nous avons donc ajouté une colonne métier, où on renseignera si le Collaborateur est un Programmeur et un Testeur. Cela permet non seulement de gérer les différences entre les 2 classes, mais aussi de gérer la création des objets, en indiquant si Hibernate doit faire new Programmeur ou new Testeur. Le discriminant vaut donc 'PROGRAMMEUR' ou 'TESTEUR'
 - Ainsi, contrairement aux autres colonnes de la table, la colonne langagePrefere doit pouvoir valoir null, car elle n'existe pas pour les testeurs (Testeur)
-- Ce découpage empêche de multiplier les appels, pour chercher tous les Collaborateurs donc le salaire dépasse un seuil par exemple, où il aurait alors fallu un double appel, ou une jointure
+- Ce découpage empêche de multiplier les appels, pour chercher tous les Collaborateurs dont le salaire dépasse un seuil par exemple, où il aurait alors fallu un double appel, ou une jointure
 
 
-**`hbm2ddl.auto = update`** : Hibernate crée ou complète les tables au démarrage, sans rien supprimer. 
+**`hbm2ddl.auto = update`** : Hibernate crée ou complète les tables au démarrage, sans rien supprimer.
 
 - Il faudra donc adapter `persistence.xml` et lister les trois classes (`Collaborateur`, `Programmeur`, `Testeur`).
 
-**Premier contact (`DemarrageJpa`)** : Le démarrage de l'app se fait depuis DEmarrageJpa, qui va créer l'EntityManager (qui va alors être appelé pour chaque opération)
+**Premier contact (`DemarrageJpa`)** : Le démarrage de l'app se fait depuis DemarrageJpa, qui va créer l'EntityManager (qui va alors être appelé pour chaque opération)
 
 ### Mission 6 — `persist` et `find`
 
@@ -105,18 +105,18 @@ L'idée ici est de différencier l'affichage à l'utilisateur, et l'affichage au
 - Ce choix s'illustre par le fait que la clé primaire ne suffit pas car elle protège les données (la base refusera toujours le doublon), mais pas l'utilisateur. Sans notre vérification, il recevrait une erreur technique d'Hibernate au moment du `commit`, incompréhensible pour lui. Notre exception métier donne un message clair, adapté à son cas d'usage.
 
 **Preuve que les données survivent** : au démarrage, on n'enregistre un collaborateur de démonstration que si `service.trouver(...)` renvoie `null` (donc si le collaborateur n'existe pas pour un id donné). Au premier lancement, 20 `insert` apparaissent. Au deuxième, aucun.
-- Toutefois, nous avons fait évoluer le modèle, en placant l'ajout des données depuis DonnesDemo dans le menu. En effet, si cette opération se fait à chaque initialisation, cela cause une opération supplémentaire parfois inutile mais couteuse, mais surtout imaginons qu'un Collaborateur change d'id (ce qui n'est pas censé arriver, on ne devrait pas pouvoir changer un id, mais imaginons que ce soit possible dans d'éventuelles évolutions de notre projet), le .find() renverra alors null, ce qui aura pour effet d'ajouter à nouveau le Colaborateur à la base (avec l'id avant la modification). -> Par exemple, si on change un id de C001 à C100, lorsqu'on relancera le programme, puisque le .find() renvoie null pour C001, il va recréer ce Collaborateur
-- Egalement, nous avons ajouté une option d'ajout de Collaborateur dans le menu. L'utilisateur peut choisir chaque champs (création de Programmeur ou de Testeur, puis valeur associée à chaque colonne) et le collaborateur sera ajouté en base.
+- Toutefois, nous avons fait évoluer le modèle, en plaçant l'ajout des données depuis DonneesDemo dans le menu. En effet, si cette opération se fait à chaque initialisation, cela cause une opération supplémentaire parfois inutile mais coûteuse, mais surtout imaginons qu'un Collaborateur change d'id (ce qui n'est pas censé arriver, on ne devrait pas pouvoir changer un id, mais imaginons que ce soit possible dans d'éventuelles évolutions de notre projet), le .find() renverra alors null, ce qui aura pour effet d'ajouter à nouveau le Collaborateur à la base (avec l'id avant la modification). -> Par exemple, si on change un id de C001 à C100, lorsqu'on relancera le programme, puisque le .find() renvoie null pour C001, il va recréer ce Collaborateur
+- Également, nous avons ajouté une option d'ajout de Collaborateur dans le menu. L'utilisateur peut choisir chaque champ (création de Programmeur ou de Testeur, puis valeur associée à chaque colonne) et le collaborateur sera ajouté en base.
 
 **À réfléchir : que vaut une clé comme `C001` ?**
 
 1. « C + 3 chiffres » donne 1000 identifiants au maximum (`C000` à `C999`). `C1000` rentre techniquement dans la colonne (longueur 10), mais casse le format, et le tri devient faux puisque c'est du texte : `"C1000"` est classé avant `"C200"`.
-2. La clé est potentiellement amenée à changer, ce choix devrait alors se répértorier sur l'ensemble de la base. Une clé primaire ne devrait pas, ou presque jamais être amenée à changer.
+2. La clé est potentiellement amenée à changer, ce choix devrait alors se répertorier sur l'ensemble de la base. Une clé primaire ne devrait pas, ou presque jamais être amenée à changer.
 3. Une clé technique : un nombre généré automatiquement par la base, sans signification pour les humains, donc sans raison de changer, sans limite de format et sans conflit entre deux utilisateurs. `C001` resterait un simple attribut, avec une contrainte d'unicité. Jpa permet de générer ce type de clé.
-- Pour la suite du TP, nous avons donc choisi de mettre en place cette option. Cela sera notamment le cas pour la table Adresse, et sa clé primaire (la table Adresse n'a pas de colonne unique, contrairmenet à Collaborateur qui avait déjà id)
+- Pour la suite du TP, nous avons donc choisi de mettre en place cette option. Cela sera notamment le cas pour la table Adresse, et sa clé primaire (la table Adresse n'a pas de colonne unique, contrairement à Collaborateur qui avait déjà id)
 
-- Comme adresse est Transiant, il faut vérifier si adresse == null, sinon notre projet plantait (NullException) lors d'un afficherFiche()
-- 
+- Comme adresse est Transient, il faut vérifier si adresse == null, sinon notre projet plantait (NullException) lors d'un afficherFiche()
+-
 ### Mission 7 — Une augmentation sans écrire `UPDATE`
 
 **Où est le SQL `UPDATE` ?**
@@ -126,7 +126,7 @@ C'est Hibernate qui le génère au `commit`. Au moment du `find`, il garde une c
 Un objet que l'`EntityManager` surveille. Un objet obtenu par `find` ou passé à `persist` est géré tant que cet `EntityManager` est ouvert (begin) : toute modification sera reportée en base au prochain `commit`. Un objet créé par `new`, ou dont l'`EntityManager` est fermé (close), n'est pas géré.
 
 **Quel rôle joue le contexte de persistance ?**
-C'est la mémoire de l'`EntityManager` : la liste des entités gérées avec leur état d'origine. Il sert à détecter les modifications, et éviter les requêtes inutiles (puisque seul les objets qui ont besoin d'opérations en base restent en mémoire)
+C'est la mémoire de l'`EntityManager` : la liste des entités gérées avec leur état d'origine. Il sert à détecter les modifications, et éviter les requêtes inutiles (puisque seuls les objets qui ont besoin d'opérations en base restent en mémoire)
 Il disparaît à la fermeture de l'`EntityManager`.
 
 **Pourquoi la transaction est-elle importante ?**
@@ -174,7 +174,7 @@ Un collaborateur a une adresse.
 Donc : plusieurs collaborateurs → une adresse.
 
 **3. Représentation en base**
-La clé étrangère est dans la table des collaborateurs : une colonne `adresse_id` qui contient l'`id` de l'adresse. (qu'on gèrera comme explique précédemment)
+La clé étrangère est dans la table des collaborateurs : une colonne `adresse_id` qui contient l'`id` de l'adresse. (qu'on gèrera comme expliqué précédemment)
 
 **4. Mapping JPA**
 
@@ -192,7 +192,7 @@ private Adresse adresse;
 
 - `Adresse` devient alors une entité (comme prévu et anticipé initialement) : `@Entity` + constructeur sans argument et ajout de l'id pour la clé étrangère en base
 
-- Par ailleurs, l'id est auto incrémenté et gérer par Jpa donc avant l'ajout en base (donc l'ajout d'un Collaborateur qui aurait cette adresse), un id vaut null
+- Par ailleurs, l'id est auto-incrémenté et géré par Jpa donc avant l'ajout en base (donc l'ajout d'un Collaborateur qui aurait cette adresse), un id vaut null
 
 ---
 
@@ -226,16 +226,19 @@ private Adresse adresse;
 
 - L'outil ne génère aucun constructeur, mais un getter et un setter pour chaque attribut, y compris `setIdCollaborateur` (on peut donc changer la clé primaire d'un objet Collaborateur). Selon moi, c'est pertinent du point de vue de certaines décisions prises tout le long du projet (basculer l'initialisation dans le menu pour éviter une recréation), mais d'un côté purement logique, il vaut mieux éviter de modifier la clé primaire.
 - Notre `Collaborateur` : un constructeur complet qui valide les champs, un constructeur vide `protected` réservé à Hibernate, aucun setter, et une méthode métier (`augmenterSalaire`) pour la modification prévue dans le menu
-- C'est une évolution intéressante, si notre projet prévoie d'ajouter des méthodes de modification de certains champs. Selon moi, il faudrait limiter les setters aux champs qui peuvent être amenés à changer, et ne pas en faire pour d'autre (cela me semble moins pertinent de modifier le Nom par exemple, l'ajout d'un setter semble alors peu pertinent)
+- C'est une évolution intéressante, si notre projet prévoit d'ajouter des méthodes de modification de certains champs. Selon moi, il faudrait limiter les setters aux champs qui peuvent être amenés à changer, et ne pas en faire pour d'autres (cela me semble moins pertinent de modifier le Nom par exemple, l'ajout d'un setter semble alors peu pertinent)
 
 **Décision 5 : la colonne `metier`**
 
 - Pour l'outil, `metier` est une simple colonne `String`. Il génère une seule classe, et `langagePrefere` existe pour tout le monde, même pour un testeur
 - De notre côté, cette colonne est le discriminant (`@DiscriminatorColumn`) d'une hiérarchie avec `Programmeur` et `Testeur`
-- L'outil lit la structure de la table, il ne peut pas deviner que cette colonne sert à distinguer deux classes. On ne le conserve pas, car on perdrait le polymorphisme (`getMetier()`, `travailler()`, et colonne langagePrefere non présent selon le type de Collaborateur)
+- L'outil lit la structure de la table, il ne peut pas deviner que cette colonne sert à distinguer deux classes. On ne le conserve pas, car on perdrait le polymorphisme (`getMetier()`, `travailler()`, et colonne langagePrefere non présente selon le type de Collaborateur)
 
 **Bilan de la comparaison**
 
 - L'outil reproduit fidèlement la structure de la table : les types, les longueurs (`length = 40` pour `metier` et `langage_prefere`) et les colonnes obligatoires
 - En revanche, il ne connaît pas le sens métier : pas d'héritage, pas de règle de validation, pas de `equals` / `hashCode`, pas de méthode métier
 - C'est donc un bon point de départ pour éviter de recopier les colonnes à la main, mais le résultat doit être relu et adapté. D'où l'intérêt d'avoir écrit l'entité à la main en premier : on sait quoi corriger
+
+**Notes :** Nous avons identifié une faille dans notre projet : si on crée un nouveau collaborateur depuis le menu de HelloEfrei. Si l'adresse est identique à une adresse en base, elle sera cependant recréée à l'identique, à l'exception de l'id (adresse-id) qui est la clé primaire, ce qui explique cette création d'une adresse "double". Cela ne cause pas de problème, car la clé primaire est différente, mais d'un point de vue logique métier, cela pose problème.
+- La solution serait double : soit on vérifie, avant l'ajout en base du collaborateur, la présence de CHAQUE champ à l'identique dans le MEME objet (les deux mots en majuscules sont nécessaires, il faut que tous les champs soient identiques, et qu'ils viennent de la même adresse). Soit on ajoute une méthode de création d'adresse dans le menu de HelloEfrei, et lors de la création de collaborateur, on affiche les différentes adresses créées (qui se trouvent donc en base) et on demande à l'utilisateur de choisir parmi les adresses déjà existantes.
