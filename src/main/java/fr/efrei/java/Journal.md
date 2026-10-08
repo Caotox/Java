@@ -2,6 +2,8 @@
 
 > Binôme : **Antoine ROCQ - Marine EL OSTA** — Package du projet : `fr.efrei.java`
 
+Notes : Utilisation de MAMP au lieu de XAMP : port 8889 utilisé
+
 ## Partie A — Fiabiliser l'application
 
 ### Mission 1 — Casser l'application
@@ -43,7 +45,7 @@ règle métier → détection → exception → appelant → message utilisateur
 ### Mission 3 — Maven
 
 - groupId : fr.efrei
-- artifactId : JavaTP
+- artifactId : Artifact - tp4-collaborateurs
 - version : 1.0-SNAPSHOT
 - 
 Pourquoi `pom.xml` plutôt qu'un `.jar` copié ?
