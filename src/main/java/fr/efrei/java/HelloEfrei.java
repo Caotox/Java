@@ -187,15 +187,10 @@ public class HelloEfrei {
         System.out.print("Pays : ");
         String pays = scanner.nextLine().trim();
 
-        if (rue.isEmpty() || codePostal.isEmpty() || ville.isEmpty() || pays.isEmpty()) {
-            System.out.println("Adresse incomplète : rue, code postal, ville et pays sont obligatoires.");
-            return;
-        }
-
-        // inséré en base par la cascade, en même temps que le collaborateur
-        Adresse adresse = new Adresse(rue, codePostal, ville, pays);
-
         try {
+            // inséré en base par la cascade, en même temps que le collaborateur
+            Adresse adresse = new Adresse(rue, codePostal, ville, pays);
+
             Collaborateur c;
             if (type.equals("P")) {
                 System.out.print("Langage préféré : ");

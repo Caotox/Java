@@ -19,7 +19,7 @@ public class Programmeur extends Collaborateur implements Formateur {
             Adresse adresse,
             String langagePrefere) {
         super(identifiant, prenom, nom, salaire, adresse);
-        this.langagePrefere = langagePrefere;
+        this.langagePrefere = Validation.texteObligatoire(langagePrefere, "langage préféré");
     }
 
     protected Programmeur() {

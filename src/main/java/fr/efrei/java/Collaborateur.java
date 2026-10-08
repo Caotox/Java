@@ -56,9 +56,13 @@ public abstract class Collaborateur {
             String nom,
             double salaire,
             Adresse adresse) {
-        this.identifiant = identifiant;
-        this.prenom = prenom;
-        this.nom = nom;
+        if (adresse == null) {
+            logger.warn("Valeur vide refusée pour le champ adresse");
+            throw new IllegalArgumentException("Le champ \"adresse\" est obligatoire.");
+        }
+        this.identifiant = Validation.texteObligatoire(identifiant, "identifiant");
+        this.prenom = Validation.texteObligatoire(prenom, "prénom");
+        this.nom = Validation.texteObligatoire(nom, "nom");
         this.salaire = salaire;
         this.adresse = adresse;
     }
@@ -109,7 +113,7 @@ public abstract class Collaborateur {
         return Objects.hash(identifiant);
     }
 
-    // pertinent ?
+    // meilleur affichage
     @Override
     public String toString() {
         return String.format("[%s] %s %s (%s) - %.2f €",

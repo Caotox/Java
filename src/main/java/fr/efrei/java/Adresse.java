@@ -28,10 +28,10 @@ public class Adresse {
     protected Adresse() { }
 
     public Adresse(String rue, String codePostal, String ville, String pays) {
-        this.rue = rue;
-        this.codePostal = codePostal;
-        this.ville = ville;
-        this.pays = pays;
+        this.rue = Validation.texteObligatoire(rue, "rue");
+        this.codePostal = Validation.texteObligatoire(codePostal, "code postal");
+        this.ville = Validation.texteObligatoire(ville, "ville");
+        this.pays = Validation.texteObligatoire(pays, "pays");
     }
 
     public Long getId()           { return id; }
