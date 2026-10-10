@@ -16,6 +16,7 @@ public class DonneesDemo {
         List<Collaborateur> liste = new ArrayList<>();
 
         liste.add(new Programmeur("C001", "Alice",    "Martin",    42000, paris,     "Java"));
+        //Doublon volontaire
         liste.add(new Programmeur("C001", "Alice",    "Martin",    42000, paris,     "Java"));
         liste.add(new Testeur(   "C002", "Bob",       "Dupont",    38000, paris));
         liste.add(new Programmeur("C003", "Clara",    "Bernard",   45000, villejuif, "Python"));

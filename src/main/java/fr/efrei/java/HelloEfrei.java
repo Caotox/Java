@@ -27,7 +27,7 @@ public class HelloEfrei {
                 switch (choix) {
                     case 0 -> System.out.println("À bientôt !");
 
-                    case 1 -> afficherListe(service.tous());
+                    case 1 -> afficherListe(service.collaborateursTriesParId());
 
                     case 2 -> {
                         System.out.print("Fragment de nom : ");
@@ -58,7 +58,7 @@ public class HelloEfrei {
                     case 8 -> {
                         System.out.print("Identifiant du collaborateur : ");
                         String id = scanner.nextLine();
-                        Collaborateur trouve = service.trouver(id);
+                        Collaborateur trouve = service.trouverUnCollaborateur(id);
                         if (trouve != null) {
                             System.out.println();
                             trouve.afficherFiche();
@@ -73,11 +73,18 @@ public class HelloEfrei {
 
                     case 11 -> {
                         // Seuls les collaborateurs absents de la base sont ajoutés
-                        int ajoutes = service.initialiser(DonneesDemo.creerCollaborateurs());
+                        int ajoutes = service.initialiserLesCollaborateurs(DonneesDemo.creerCollaborateurs());
                         System.out.println(ajoutes + " collaborateur(s) de démonstration ajouté(s).");
                     }
+                    case 12 -> {
+                        System.out.print("Langage : ");
+                        String langage = scanner.nextLine();
+                        afficherListe(service.programmeursDuLangage(langage));
+                    }
 
-                    default -> System.out.println("Option invalide. Choisissez entre 0 et 11.");
+                    case 13 -> testerRollback(service);
+
+                    default -> System.out.println("Option invalide. Choisissez entre 0 et 13.");
                 }
 
             } else {
@@ -88,6 +95,24 @@ public class HelloEfrei {
 
         scanner.close();
         fabrique.close(); // on ferme la fabrique en quittant
+    }
+
+    private static void testerRollback(CollaborateurService service) {
+        Adresse adresse = new Adresse("1 rue du Test", "75000", "Paris", "France");
+        Collaborateur premier = new Testeur("C901", "Test", "Un", 30000, adresse);
+        Collaborateur second = new Testeur("C902", "Test", "Deux", 30000, adresse);
+
+        try {
+            service.ajouterDeux(premier, second, true);
+        } catch (IllegalStateException e) {
+            System.out.println("Échec simulé : " + e.getMessage());
+        }
+
+        boolean baseInchangee = service.trouverUnCollaborateur("C901") == null
+                && service.trouverUnCollaborateur("C902") == null;
+        System.out.println(baseInchangee
+                ? "Rollback OK : aucun des deux collaborateurs n'est en base."
+                : "PROBLÈME : un collaborateur a été enregistré malgré la panne !");
     }
 
     // --- Méthodes statiques utilitaires ---
@@ -106,6 +131,8 @@ public class HelloEfrei {
         System.out.println("9. Augmenter le salaire d'un collaborateur");
         System.out.println("10. Ajouter un collaborateur (Programmeur ou Testeur au choix depuis la saisie)");
         System.out.println("11. Charger les données de démonstration");
+        System.out.println("12. Afficher les programmeurs d'un langage");
+        System.out.println("13. Tester le rollback d'une transaction (challenge A)");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -114,7 +141,7 @@ public class HelloEfrei {
         System.out.print("Identifiant du collaborateur : ");
         String id = scanner.nextLine();
 
-        Collaborateur avant = service.trouver(id);
+        Collaborateur avant = service.trouverUnCollaborateur(id);
         if (avant == null) {
             System.out.println("Collaborateur introuvable : " + id);
             return;
@@ -199,7 +226,7 @@ public class HelloEfrei {
             } else {
                 c = new Testeur(id, prenom, nom, salaire, adresse);
             }
-            service.ajouter(c);
+            service.ajouterUnCollaborateur(c);
             System.out.println("Collaborateur " + id + " ajouté.");
         } catch (CollaborateurDejaExistantException e) {
             System.out.println("Impossible : l'identifiant " + e.identifiant() + " est déjà utilisé.");
