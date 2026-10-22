@@ -43,9 +43,13 @@ Règle 6 : un programmeur ne peut pas avoir plus de 3 tickets « En cours » en 
 
 Règle 9 : les opérations incohérentes (ticket inexistant…) sont traitées proprement, et une opération refusée ne modifie jamais les données.
 
-Tout d'abord, il faut commencer par la suppression du setter du statut du Ticket. L'idée est d'empêcher toute modification du statut d'un Ticket qui ne rentre pas dans le cycle de vie prévu par les méthodes de la classe Ticket. Pour résumer, seules les méthodes de la classe Ticket, qui entrent dans le cycle de vie de ce dernier, peuvent modifier le statut d'un Ticket.
+Tout d'abord, il faut commencer par la suppression du setter du statut du Ticket. L'idée est d'empêcher toute modification du statut d'un Ticket qui ne rentre pas dans le cycle de vie prévu par les méthodes de la classe Ticket. Pour résumer, seules les méthodes de la classe Ticket, qui entrent dans le cycle de vie de ce dernier, peuvent modifier le statut d'un Ticket. Un acteur n'est précisé que pour la validation. Ainsi, nous avons fait le choix de ne pas contrôler la nature du Collaborateur lors de la mise à jour du statut d'un Ticket (de A_FAIRE -> EN_COURS -> A_VALIDER). Cette décision se justifie par le fait que dans le monde de l'entreprise, un Testeur peut parfois être amené à faire progresser un Ticket de EN_COURS à A_VALIDER, lors d'un daily par exemple.
 
 Ensuite, la répartition dans le code est la suivante.
+
+La classe Ticket possède les méthodes de changement du statut d'un ticket, dans le respect du cycle de vie de ce dernier. Ces méthodes vont se charger de la vérification du statut (Exemple : Vérification qu'un ticket était A_FAIRE avant de le faire passer à EN_COURS), voire même de la vérification de la nature du Collaborateur avant le passage d'un Ticket de A_VALIDER à TERMINE (s'assurer qu'il s'agit bien d'un Testeur). 
+
+Ces méthodes vont être appelées par la Classe CollaborateurService.
 
 ### Validation d'un Ticket
 
