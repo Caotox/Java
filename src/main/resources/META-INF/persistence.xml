@@ -12,6 +12,7 @@
         <class>fr.efrei.java.Collaborateur</class>
         <class>fr.efrei.java.Programmeur</class>
         <class>fr.efrei.java.Testeur</class>
+        <class>fr.efrei.java.Ticket</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

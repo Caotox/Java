@@ -84,6 +84,8 @@ public class HelloEfrei {
 
                     case 13 -> testerRollback(service);
 
+                    case 14 -> creerTicket(scanner, service);
+
                     default -> System.out.println("Option invalide. Choisissez entre 0 et 13.");
                 }
 
@@ -133,6 +135,7 @@ public class HelloEfrei {
         System.out.println("11. Charger les données de démonstration");
         System.out.println("12. Afficher les programmeurs d'un langage");
         System.out.println("13. Tester le rollback d'une transaction (challenge A)");
+        System.out.println("14. Crée un ticket");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -233,5 +236,33 @@ public class HelloEfrei {
         } catch (IllegalArgumentException e) {
             System.out.println("Données invalides : " + e.getMessage());
         }
+    }
+    private static void creerTicket(Scanner scanner, CollaborateurService service) {
+        System.out.print("Titre du Ticket : ");
+        String titre = scanner.nextLine().trim();
+        System.out.print("Priorite (1 : BASSE, 2 : NORMALE, 3: HAUTE) : ");
+        Integer priorite = scanner.nextInt();
+
+        Priorite prioriteTicket = null;
+        if  (priorite.equals(1)) {
+            prioriteTicket = Priorite.BASSE;
+        } else if (priorite.equals(2)) {
+            prioriteTicket = Priorite.NORMALE;
+        }  else if (priorite.equals(3)) {
+            prioriteTicket = Priorite.HAUTE;
+        } else {
+            System.out.println("Priorite invalide.");
+            return;
+        }
+        try {
+            Ticket ticket = new Ticket(titre, prioriteTicket);
+            service.creerTicket(ticket);
+            System.out.println("Ticket ajouté avec succès.");
+        } catch (TicketDejaExistantException e) {
+            System.out.println("Impossible : le ticket " + e.identifiant() + " est déjà crée.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Données invalides : " + e.getMessage());
+        }
+
     }
 }

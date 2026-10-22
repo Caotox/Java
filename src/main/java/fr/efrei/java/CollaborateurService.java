@@ -254,4 +254,29 @@ public class CollaborateurService {
                     .getResultList();
         }
     }
+
+    public Ticket trouverUnTicket(Long identifiant) {
+        try (EntityManager em = fabrique.createEntityManager()) {
+            return chercherParIdentifiant(em, identifiant);
+        }
+    }
+
+    private Ticket chercherParIdentifiant(EntityManager em, Long identifiant) {
+        List<Ticket> resultat = em.createQuery(
+                        "select t from Ticket t where t.id = :identifiant",
+                        Ticket.class)
+                .setParameter("identifiant", identifiant) // jamais de concaténation avec la saisie
+                .getResultList();
+        return resultat.isEmpty() ? null : resultat.get(0);
+    }
+
+    public void creerTicket(Ticket ticket){
+        if (trouverUnTicket(ticket.getId()) != null) {
+            logger.warn("Doublon refusé pour {}", ticket.getId());
+            throw new TicketDejaExistantException(ticket.getId());
+        }
+        dansUneTransaction(em -> em.persist(ticket));
+        logger.info("Ticket {} enregistré en base", ticket.getId());
+    }
+
 }
