@@ -279,4 +279,80 @@ public class CollaborateurService {
         logger.info("Ticket {} enregistré en base", ticket.getId());
     }
 
+    public Ticket demarrerTicket(Long idTicket) {
+        return transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            long enCours = 0;
+            if (ticket.getAssigne() != null) {
+                enCours = compterTicketsEnCours(em, ticket.getAssigne());
+            }
+            ticket.demarrer(enCours);
+            logger.info("Ticket {} démarré", idTicket);
+            return ticket;
+        });
+    }
+
+    public Ticket soumettreTicket(Long idTicket) {
+        return transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            ticket.soumettre();
+            logger.info("Ticket {} soumis à validation", idTicket);
+            return ticket;
+        });
+    }
+
+    public Ticket validerTicket(Long idTicket, String identifiantTesteur) {
+        return transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            Collaborateur valideur = collaborateurExistant(em, identifiantTesteur);
+            ticket.valider(valideur);
+            logger.info("Ticket {} validé par {}", idTicket, identifiantTesteur);
+            return ticket;
+        });
+    }
+
+    public Ticket renvoyerTicket(Long idTicket, String identifiantTesteur) {
+        return transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            Collaborateur valideur = collaborateurExistant(em, identifiantTesteur);
+            ticket.renvoyer(valideur);
+            logger.info("Ticket {} renvoyé en cours par {}", idTicket, identifiantTesteur);
+            return ticket;
+        });
+    }
+
+    public void supprimerTicket(Long idTicket) {
+        dansUneTransaction(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            ticket.verifierSuppressionPossible();
+            em.remove(ticket);
+            logger.info("Ticket {} supprimé", idTicket);
+        });
+    }
+
+    private Ticket ticketExistant(EntityManager em, Long idTicket) {
+        Ticket ticket = em.find(Ticket.class, idTicket);
+        if (ticket == null) {
+            throw new OperationRefuseeException("Ticket introuvable : #" + idTicket);
+        }
+        return ticket;
+    }
+
+    private Collaborateur collaborateurExistant(EntityManager em, String identifiant) {
+        Collaborateur collaborateur = chercherParIdentifiant(em, identifiant);
+        if (collaborateur == null) {
+            throw new OperationRefuseeException("Collaborateur introuvable : " + identifiant);
+        }
+        return collaborateur;
+    }
+
+    private long compterTicketsEnCours(EntityManager em, Collaborateur collaborateur) {
+        return em.createQuery(
+                        "select count(t) from Ticket t "
+                                + "where t.assigne = :collaborateur and t.statut = :statut",
+                        Long.class)
+                .setParameter("collaborateur", collaborateur)
+                .setParameter("statut", Statut.EN_COURS)
+                .getSingleResult();
+    }
 }

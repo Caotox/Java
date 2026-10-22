@@ -29,4 +29,9 @@ public class Testeur extends Collaborateur {
     public void travailler() {
         System.out.println(getPrenom() + " exécute une campagne de tests.");
     }
+    // En revanche, un Testeur peut valider un ticket
+    @Override
+    public boolean peutValiderUnTicket() {
+        return true;
+    }
 }

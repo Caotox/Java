@@ -85,7 +85,10 @@ public class HelloEfrei {
                     case 13 -> testerRollback(service);
 
                     case 14 -> creerTicket(scanner, service);
-
+                    case 15 -> demarrerTicket(scanner, service);
+                    case 16 -> soumettreTicket(scanner, service);
+                    case 17 -> validerOuRenvoyerTicket(scanner, service);
+                    case 18 -> supprimerTicket(scanner, service);
                     default -> System.out.println("Option invalide. Choisissez entre 0 et 13.");
                 }
 
@@ -136,6 +139,10 @@ public class HelloEfrei {
         System.out.println("12. Afficher les programmeurs d'un langage");
         System.out.println("13. Tester le rollback d'une transaction (challenge A)");
         System.out.println("14. Crée un ticket");
+        System.out.println("15. Démarrer un ticket");
+        System.out.println("16. Soumettre un ticket à validation");
+        System.out.println("17. Valider ou renvoyer un ticket (testeur)");
+        System.out.println("18. Supprimer un ticket");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -264,5 +271,65 @@ public class HelloEfrei {
             System.out.println("Données invalides : " + e.getMessage());
         }
 
+    }
+    private static Long lireNumeroTicket(Scanner scanner) {
+        System.out.print("Numéro du ticket : ");
+        try {
+            return Long.parseLong(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Numéro invalide : entrez un nombre.");
+            return null;
+        }
+    }
+
+    private static void demarrerTicket(Scanner scanner, CollaborateurService service) {
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+        try {
+            System.out.println("Ticket démarré : " + service.demarrerTicket(id));
+        } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
+        }
+    }
+
+    private static void soumettreTicket(Scanner scanner, CollaborateurService service) {
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+        try {
+            System.out.println("Ticket soumis : " + service.soumettreTicket(id));
+        } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
+        }
+    }
+
+    private static void validerOuRenvoyerTicket(Scanner scanner, CollaborateurService service) {
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+        System.out.print("Identifiant du testeur : ");
+        String testeur = scanner.nextLine().trim();
+        System.out.print("V = valider, R = renvoyer en cours : ");
+        String action = scanner.nextLine().trim().toUpperCase();
+        try {
+            if (action.equals("V")) {
+                System.out.println("Ticket validé : " + service.validerTicket(id, testeur));
+            } else if (action.equals("R")) {
+                System.out.println("Ticket renvoyé : " + service.renvoyerTicket(id, testeur));
+            } else {
+                System.out.println("Action invalide : tapez V ou R.");
+            }
+        } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
+        }
+    }
+
+    private static void supprimerTicket(Scanner scanner, CollaborateurService service) {
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+        try {
+            service.supprimerTicket(id);
+            System.out.println("Ticket #" + id + " supprimé.");
+        } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
+        }
     }
 }

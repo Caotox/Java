@@ -119,4 +119,8 @@ public abstract class Collaborateur {
         return String.format("[%s] %s %s (%s) - %.2f €",
                 identifiant, prenom, nom, getMetier(), salaire);
     }
+    // Par défaut, un collaborateur ne peut pas valider de ticket
+    public boolean peutValiderUnTicket() {
+        return false;
+    }
 }
