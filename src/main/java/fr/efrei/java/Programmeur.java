@@ -42,4 +42,9 @@ public class Programmeur extends Collaborateur implements Formateur {
     public void former() {
         System.out.println(getPrenom() + " anime une formation interne.");
     }
+
+    @Override
+    public boolean isProgrammeur() {
+        return true;
+    }
 }

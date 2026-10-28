@@ -83,12 +83,17 @@ public class HelloEfrei {
                     }
 
                     case 13 -> testerRollback(service);
-
                     case 14 -> creerTicket(scanner, service);
-                    case 15 -> demarrerTicket(scanner, service);
-                    case 16 -> soumettreTicket(scanner, service);
-                    case 17 -> validerOuRenvoyerTicket(scanner, service);
-                    case 18 -> supprimerTicket(scanner, service);
+                    case 15 -> consulterAllTicket(service);
+                    case 16 -> consulterTicketByProgrammeur(scanner, service);
+                    case 17 -> consulterTicketByStatut(scanner, service);
+                    case 18 -> assignerTicket(scanner, service);
+                    case 19 -> demarrerTicket(scanner, service);
+                    case 20 -> soumettreTicket(scanner, service);
+                    case 21 -> validerOuRenvoyerTicket(scanner, service);
+                    case 22 -> supprimerTicket(scanner, service);
+                    case 23 -> modifierTitreTicket(scanner, service);
+                    case 24 -> modifierPrioriteTicket(scanner, service);
                     default -> System.out.println("Option invalide. Choisissez entre 0 et 13.");
                 }
 
@@ -100,6 +105,15 @@ public class HelloEfrei {
 
         scanner.close();
         fabrique.close(); // on ferme la fabrique en quittant
+    }
+
+    private static void consulterAllTicket(CollaborateurService service) {
+        List<Ticket> tickets = service.consulterAllTickets();
+        if (tickets.isEmpty()) {
+            System.out.println("Aucun ticket trouvé");
+        } else {
+            tickets.forEach(System.out::println);
+        }
     }
 
     private static void testerRollback(CollaborateurService service) {
@@ -139,10 +153,16 @@ public class HelloEfrei {
         System.out.println("12. Afficher les programmeurs d'un langage");
         System.out.println("13. Tester le rollback d'une transaction (challenge A)");
         System.out.println("14. Crée un ticket");
-        System.out.println("15. Démarrer un ticket");
-        System.out.println("16. Soumettre un ticket à validation");
-        System.out.println("17. Valider ou renvoyer un ticket (testeur)");
-        System.out.println("18. Supprimer un ticket");
+        System.out.println("15. Consulter tous les tickets");
+        System.out.println("16. Consulter les tickets d'un programmeur");
+        System.out.println("17. Consulter les tickets en fonction de leur statut");
+        System.out.println("18. Assigner un ticket à un programmeur");
+        System.out.println("19. Démarrer un ticket");
+        System.out.println("20. Soumettre un ticket à validation");
+        System.out.println("22. Valider ou renvoyer un ticket (testeur)");
+        System.out.println("23. Supprimer un ticket");
+        System.out.println("24. Modifier le titre d'une ticket");
+        System.out.println("25. Modifier la priorite d'une ticket");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -329,6 +349,106 @@ public class HelloEfrei {
             service.supprimerTicket(id);
             System.out.println("Ticket #" + id + " supprimé.");
         } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
+        }
+    }
+
+    private static void consulterTicketByProgrammeur(Scanner scanner,  CollaborateurService service) {
+        System.out.println("ID du Programmeur : ");
+        String id = scanner.nextLine();
+        if (id == null) return;
+        try {
+            List <Ticket> ticketsByProgrammeur = service.consulterTicketByProgrammeur(id);
+            if (ticketsByProgrammeur.isEmpty()) {
+                System.out.println("Aucun ticket trouvé.");
+            } else {
+                ticketsByProgrammeur.forEach(System.out::println);
+            }
+        } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
+        }
+    }
+
+    private static void consulterTicketByStatut(Scanner scanner,  CollaborateurService service) {
+        System.out.println("Voir les tickets qui ont pour statut : ");
+        System.out.println("1. A FAIRE");
+        System.out.println("2. EN COURS");
+        System.out.println("3. A VALIDER");
+        System.out.println("4. TERMINER");
+        int choixStatut = scanner.nextInt();
+        List<Ticket> tickets = switch (choixStatut) {
+            case 1 -> service.consulterTicketByStatut(Statut.A_FAIRE);
+            case 2 -> service.consulterTicketByStatut(Statut.EN_COURS);
+            case 3 -> service.consulterTicketByStatut(Statut.A_VALIDER);
+            case 4 -> service.consulterTicketByStatut(Statut.TERMINE);
+            default -> service.consulterAllTickets();
+        };
+
+        if (tickets.isEmpty()) {
+            System.out.println("Aucun ticket trouvé.");
+        } else {
+            tickets.forEach(System.out::println);
+        }
+    }
+
+    public static void assignerTicket(Scanner scanner, CollaborateurService service) {
+        System.out.println("Quel ticket voulez vous assigner ?");
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+        System.out.println("A quel programmeur voulez-vous assigner le ticket d'id : " + id);
+        String idProgrammeur = scanner.nextLine();
+        if (idProgrammeur == null) return;
+        try {
+            service.assignerTicket(id, idProgrammeur);
+            System.out.println("Ticket assigné avec succès");
+        } catch (OperationRefuseeException e) {
+            throw new OperationRefuseeException(e.getMessage());
+        }
+    }
+
+    private static void modifierTitreTicket(Scanner scanner, CollaborateurService service) {
+        System.out.println("Quel ticket voulez vous modifier ?");
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+        System.out.println("Par quel titre voulez-vous le remplacer");
+        String nouveauTitre = scanner.nextLine();
+        if (nouveauTitre == null) return;
+        service.modifierTitreTicket(id, nouveauTitre);
+    }
+
+    private static void modifierPrioriteTicket(Scanner scanner, CollaborateurService service) {
+        System.out.println("Quel ticket voulez-vous modifier ?");
+        Long id = lireNumeroTicket(scanner);
+        if (id == null) return;
+
+        System.out.println("Quelle est la nouvelle priorité ?");
+        System.out.println("1. BASSE");
+        System.out.println("2. NORMALE");
+        System.out.println("3. HAUTE");
+
+        int choixPriorite;
+        try {
+            choixPriorite = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Saisie invalide : entrez un nombre.");
+            return;
+        }
+
+        Priorite nouvellePriorite = switch (choixPriorite) {
+            case 1 -> Priorite.BASSE;
+            case 2 -> Priorite.NORMALE;
+            case 3 -> Priorite.HAUTE;
+            default -> null;
+        };
+        if (nouvellePriorite == null) {
+            System.out.println("Priorité invalide : choisissez 1, 2 ou 3.");
+            return;
+        }
+
+        try {
+            Ticket ticket = service.modifierPrioriteTicket(id, nouvellePriorite);
+            System.out.println("Priorité modifiée : " + ticket);
+        } catch (OperationRefuseeException | IllegalArgumentException e) {
             System.out.println("Refusé : " + e.getMessage());
         }
     }

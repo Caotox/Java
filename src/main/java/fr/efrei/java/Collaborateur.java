@@ -123,4 +123,8 @@ public abstract class Collaborateur {
     public boolean peutValiderUnTicket() {
         return false;
     }
+
+    public boolean isProgrammeur() {
+        return false;
+    }
 }

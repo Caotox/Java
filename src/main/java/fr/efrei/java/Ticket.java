@@ -96,6 +96,43 @@ public class Ticket {
         }
     }
 
+    private void verifierModificationPossible() {
+        if (statut == Statut.TERMINE) {
+            throw new OperationRefuseeException("Impossible de modifier le ticket #" + id + " car son statut est déjà à 'terminé'");
+        }
+    }
+
+    private void verifierNombreTicket(long ticketsAssignes, Collaborateur programmeur) {
+        if (ticketsAssignes > MAX_TICKETS_EN_COURS) {
+            throw new OperationRefuseeException("Le programmeur " +  programmeur.getPrenom() + "a déjà 3 tickets");
+        }
+    }
+
+    public void assigner(Collaborateur responsable) {
+        if (responsable == null) {
+            throw new IllegalArgumentException("Le responsable est obligatoire.");
+        }
+        if (!responsable.isProgrammeur()) {
+            throw new OperationRefuseeException(responsable.getPrenom()
+                    + " n'est pas programmeur : seul un programmeur peut se voir assigner un ticket.");
+        }
+        verifierStatut(Statut.A_FAIRE, "assigner");
+        this.assigne = responsable;
+    }
+
+    public void modifierTitre(String nouveauTitre) {
+        verifierModificationPossible();
+        this.titre = Validation.texteObligatoire(nouveauTitre, "titre");
+    }
+
+    public void modifierPriorite(Priorite nouvellePriorite) {
+        if (nouvellePriorite == null) {
+            throw new IllegalArgumentException("La priorité est obligatoire.");
+        }
+        verifierModificationPossible();
+        this.priorite = nouvellePriorite;
+    }
+
     @Override
     public String toString() {
         String responsable = (assigne == null)

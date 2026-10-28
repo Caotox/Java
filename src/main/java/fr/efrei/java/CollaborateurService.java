@@ -279,6 +279,42 @@ public class CollaborateurService {
         logger.info("Ticket {} enregistré en base", ticket.getId());
     }
 
+    public List<Ticket> consulterAllTickets() {
+        try (EntityManager em = fabrique.createEntityManager()) {
+            return em.createQuery(
+                            "select t from Ticket t order by t.id",
+                            Ticket.class)
+                    .getResultList();
+        }
+    }
+
+    public List<Ticket> consulterTicketByProgrammeur(String identifiantProgrammeur) {
+        if (identifiantProgrammeur == null || identifiantProgrammeur.isBlank()) {
+            throw new IllegalArgumentException("L'identifiant du programmeur est obligatoire");
+        }
+        try (EntityManager em = fabrique.createEntityManager()) {
+            collaborateurExistant(em, identifiantProgrammeur);
+
+            return em.createQuery(
+                            "select t from Ticket t "
+                                    + "where t.assigne.identifiant = :identifiant "
+                                    + "order by t.id",
+                            Ticket.class)
+                    .setParameter("identifiant", identifiantProgrammeur)
+                    .getResultList();
+        }
+    }
+
+    public List<Ticket> consulterTicketByStatut(Statut statut) {
+        try (EntityManager em = fabrique.createEntityManager()) {
+            return em.createQuery(
+                            "select t from Ticket t where t.statut = :statut order by t.id",
+                            Ticket.class)
+                    .setParameter("statut", statut)
+                    .getResultList();
+        }
+    }
+
     public Ticket demarrerTicket(Long idTicket) {
         return transactionAvecResultat(em -> {
             Ticket ticket = ticketExistant(em, idTicket);
@@ -354,5 +390,42 @@ public class CollaborateurService {
                 .setParameter("collaborateur", collaborateur)
                 .setParameter("statut", Statut.EN_COURS)
                 .getSingleResult();
+    }
+
+    private long compterTicketsActifs(EntityManager em, Collaborateur collaborateur) {
+        return em.createQuery(
+                        "select count(t) from Ticket t "
+                                + "where t.assigne = :collaborateur and t.statut <> :termine",
+                        Long.class)
+                .setParameter("collaborateur", collaborateur)
+                .setParameter("termine", Statut.TERMINE)
+                .getSingleResult();
+    }
+
+    public void assignerTicket(Long idTicket, String identifiantCollaborateur) {
+        transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            Collaborateur responsable = collaborateurExistant(em, identifiantCollaborateur);
+            ticket.assigner(responsable);
+            return ticket;
+        });
+    }
+
+    public Ticket modifierTitreTicket(Long idTicket, String nouveauTitre) {
+        return transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            ticket.modifierTitre(nouveauTitre);
+            logger.info("Ticket {} : titre modifié", idTicket);
+            return ticket;
+        });
+    }
+
+    public Ticket modifierPrioriteTicket(Long idTicket, Priorite nouvellePriorite) {
+        return transactionAvecResultat(em -> {
+            Ticket ticket = ticketExistant(em, idTicket);
+            ticket.modifierPriorite(nouvellePriorite);
+            logger.info("Ticket {} : priorité modifiée en {}", idTicket, nouvellePriorite);
+            return ticket;
+        });
     }
 }
