@@ -41,9 +41,6 @@ public class Ticket {
     public Statut getStatut()         { return statut; }
     public Collaborateur getAssigne() { return assigne; }
 
-    public void setTitre(String titre)          { this.titre = titre; }
-    public void setPriorite(Priorite priorite)  { this.priorite = priorite; }
-
     public void demarrer(long ticketsEnCoursDuResponsable) {
         verifierStatut(Statut.A_FAIRE, "démarrer");
         if (assigne == null) {

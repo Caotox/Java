@@ -271,10 +271,6 @@ public class CollaborateurService {
     }
 
     public void creerTicket(Ticket ticket){
-        if (trouverUnTicket(ticket.getId()) != null) {
-            logger.warn("Doublon refusé pour {}", ticket.getId());
-            throw new TicketDejaExistantException(ticket.getId());
-        }
         dansUneTransaction(em -> em.persist(ticket));
         logger.info("Ticket {} enregistré en base", ticket.getId());
     }
@@ -393,16 +389,6 @@ public class CollaborateurService {
                         Long.class)
                 .setParameter("collaborateur", collaborateur)
                 .setParameter("statut", Statut.EN_COURS)
-                .getSingleResult();
-    }
-
-    private long compterTicketsActifs(EntityManager em, Collaborateur collaborateur) {
-        return em.createQuery(
-                        "select count(t) from Ticket t "
-                                + "where t.assigne = :collaborateur and t.statut <> :termine",
-                        Long.class)
-                .setParameter("collaborateur", collaborateur)
-                .setParameter("termine", Statut.TERMINE)
                 .getSingleResult();
     }
 

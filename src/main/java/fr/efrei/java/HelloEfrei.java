@@ -369,7 +369,7 @@ public class HelloEfrei {
             } else {
                 ticketsByProgrammeur.forEach(System.out::println);
             }
-        } catch (OperationRefuseeException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Refusé : " + e.getMessage());
         }
     }
