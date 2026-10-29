@@ -268,17 +268,22 @@ public class HelloEfrei {
         System.out.print("Titre du Ticket : ");
         String titre = scanner.nextLine().trim();
         System.out.print("Priorite (1 : BASSE, 2 : NORMALE, 3: HAUTE) : ");
-        Integer priorite = scanner.nextInt();
+        int priorite;
+        try {
+            priorite = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Saisie invalide : entrez un nombre.");
+            return;
+        }
 
-        Priorite prioriteTicket = null;
-        if  (priorite.equals(1)) {
-            prioriteTicket = Priorite.BASSE;
-        } else if (priorite.equals(2)) {
-            prioriteTicket = Priorite.NORMALE;
-        }  else if (priorite.equals(3)) {
-            prioriteTicket = Priorite.HAUTE;
-        } else {
-            System.out.println("Priorite invalide.");
+        Priorite prioriteTicket = switch (priorite){
+            case 1 -> Priorite.BASSE;
+            case 2 -> Priorite.NORMALE;
+            case 3 -> Priorite.HAUTE;
+            default -> null;
+        };
+        if (prioriteTicket == null) {
+            System.out.println("Priorité invalide : choisissez 1, 2 ou 3.");
             return;
         }
         try {
@@ -375,7 +380,13 @@ public class HelloEfrei {
         System.out.println("2. EN COURS");
         System.out.println("3. A VALIDER");
         System.out.println("4. TERMINER");
-        int choixStatut = scanner.nextInt();
+        int choixStatut;
+        try {
+            choixStatut = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Saisie invalide : entrez un nombre.");
+            return;
+        }
         List<Ticket> tickets = switch (choixStatut) {
             case 1 -> service.consulterTicketByStatut(Statut.A_FAIRE);
             case 2 -> service.consulterTicketByStatut(Statut.EN_COURS);
@@ -383,6 +394,10 @@ public class HelloEfrei {
             case 4 -> service.consulterTicketByStatut(Statut.TERMINE);
             default -> service.consulterAllTickets();
         };
+        if (tickets == null) {
+            System.out.println("Statut invalide : choisissez 1, 2 ou 3.");
+            return;
+        }
 
         if (tickets.isEmpty()) {
             System.out.println("Aucun ticket trouvé.");
@@ -402,7 +417,7 @@ public class HelloEfrei {
             service.assignerTicket(id, idProgrammeur);
             System.out.println("Ticket assigné avec succès");
         } catch (OperationRefuseeException e) {
-            throw new OperationRefuseeException(e.getMessage());
+            System.out.println("Refusé : " + e.getMessage());
         }
     }
 
