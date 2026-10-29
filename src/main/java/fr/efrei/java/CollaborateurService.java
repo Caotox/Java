@@ -418,4 +418,46 @@ public class CollaborateurService {
             return ticket;
         });
     }
+
+    public int initialiserLesTickets(List<Ticket> ticket) {
+        return transactionAvecResultat(em -> {
+            long existants = em.createQuery("select count(t) from Ticket t", Long.class).getSingleResult();
+            if (existants > 0) {
+                logger.debug("Tickets de démonstration déjà présents, ignorés");
+                return 0;
+            }
+            ticket.forEach(em::persist);
+
+            Collaborateur alice = collaborateurExistant(em, "C001");
+            Collaborateur clara = collaborateurExistant(em, "C003");
+            Collaborateur emma  = collaborateurExistant(em, "C005");
+            Collaborateur bob   = collaborateurExistant(em, "C002");
+
+            ticket.get(3).assigner(alice);
+
+            ticket.get(4).assigner(alice);
+            ticket.get(4).demarrer(0);
+
+            ticket.get(5).assigner(alice);
+            ticket.get(5).demarrer(1);
+
+            ticket.get(6).assigner(alice);
+            ticket.get(6).demarrer(2);
+
+            ticket.get(7).assigner(clara);
+            ticket.get(7).demarrer(0);
+            ticket.get(7).soumettre();
+
+            ticket.get(8).assigner(clara);
+            ticket.get(8).demarrer(1);
+            ticket.get(8).soumettre();
+
+            ticket.get(9).assigner(emma);
+            ticket.get(9).demarrer(0);
+            ticket.get(9).soumettre();
+            ticket.get(9).valider(bob);
+
+            return ticket.size();
+        });
+    }
 }

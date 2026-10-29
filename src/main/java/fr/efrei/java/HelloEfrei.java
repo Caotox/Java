@@ -72,9 +72,11 @@ public class HelloEfrei {
                     case 10 -> ajouterCollaborateur(scanner, service);
 
                     case 11 -> {
-                        // Seuls les collaborateurs absents de la base sont ajoutés
+                        // Seuls les collaborateurs et tickets absents de la base sont ajoutés
                         int ajoutes = service.initialiserLesCollaborateurs(DonneesDemo.creerCollaborateurs());
+                        int initialiserLesTickets = service.initialiserLesTickets(DonneesDemo.creerTickets());
                         System.out.println(ajoutes + " collaborateur(s) de démonstration ajouté(s).");
+                        System.out.println(initialiserLesTickets + " tickets(s) de démonstration ajouté(s).");
                     }
                     case 12 -> {
                         System.out.print("Langage : ");
@@ -94,7 +96,7 @@ public class HelloEfrei {
                     case 22 -> supprimerTicket(scanner, service);
                     case 23 -> modifierTitreTicket(scanner, service);
                     case 24 -> modifierPrioriteTicket(scanner, service);
-                    default -> System.out.println("Option invalide. Choisissez entre 0 et 13.");
+                    default -> System.out.println("Option invalide. Choisissez entre 0 et 24.");
                 }
 
             } else {
@@ -149,7 +151,7 @@ public class HelloEfrei {
         System.out.println("8. Afficher la fiche d'un collaborateur");
         System.out.println("9. Augmenter le salaire d'un collaborateur");
         System.out.println("10. Ajouter un collaborateur (Programmeur ou Testeur au choix depuis la saisie)");
-        System.out.println("11. Charger les données de démonstration");
+        System.out.println("11. Charger les données de démonstration (Collaborateur et Tickets)");
         System.out.println("12. Afficher les programmeurs d'un langage");
         System.out.println("13. Tester le rollback d'une transaction (challenge A)");
         System.out.println("14. Crée un ticket");
@@ -369,7 +371,7 @@ public class HelloEfrei {
             } else {
                 ticketsByProgrammeur.forEach(System.out::println);
             }
-        } catch (IllegalArgumentException e) {
+        } catch (OperationRefuseeException | IllegalArgumentException e) {
             System.out.println("Refusé : " + e.getMessage());
         }
     }
@@ -392,7 +394,11 @@ public class HelloEfrei {
             case 2 -> service.consulterTicketByStatut(Statut.EN_COURS);
             case 3 -> service.consulterTicketByStatut(Statut.A_VALIDER);
             case 4 -> service.consulterTicketByStatut(Statut.TERMINE);
-            default -> service.consulterAllTickets();
+            default -> {
+                System.out.println("Choix Invalide. Voici tous les tickets");
+                service.consulterAllTickets();
+                yield null;
+            }
         };
         if (tickets == null) {
             System.out.println("Statut invalide : choisissez 1, 2 ou 3.");
@@ -431,7 +437,7 @@ public class HelloEfrei {
         try {
             service.modifierTitreTicket(id, nouveauTitre);
             System.out.println("Titre modifié avec succès ! ");
-        } catch (OperationRefuseeException e) {
+        } catch (OperationRefuseeException | IllegalArgumentException e) {
             System.out.println("Modification refusée: " + e.getMessage());
         }
 

@@ -40,4 +40,21 @@ public class DonneesDemo {
 
         return liste;
     }
+
+    public static List<Ticket> creerTickets(){
+        List<Ticket> tickets = new ArrayList<>();
+        tickets.add(new Ticket("Corriger l'export PDF", Priorite.HAUTE));
+        tickets.add(new Ticket("Ajouter la recherche par nom", Priorite.NORMALE));
+        tickets.add(new Ticket("Mettre à jour la documentation", Priorite.BASSE));
+        tickets.add(new Ticket("Préparer la démo client", Priorite.NORMALE));
+        tickets.add(new Ticket("Créer la page de connexion", Priorite.HAUTE));
+        tickets.add(new Ticket("Optimiser les requêtes SQL", Priorite.NORMALE));
+        tickets.add(new Ticket("Migrer vers Java 21", Priorite.HAUTE));
+        tickets.add(new Ticket("Écrire les tests unitaires", Priorite.NORMALE));
+        tickets.add(new Ticket("Corriger le bug de paiement", Priorite.HAUTE));
+        tickets.add(new Ticket("Configurer l'intégration continue", Priorite.BASSE));
+
+        return tickets;
+    }
+
 }
