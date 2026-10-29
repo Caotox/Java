@@ -68,9 +68,13 @@ public class Ticket {
         statut = Statut.TERMINE;
     }
 
-    public void renvoyer(Collaborateur valideur) {
+    public void renvoyer(Collaborateur valideur, long ticketsEnCoursDuResponsable) {
         verifierValideur(valideur);
         verifierStatut(Statut.A_VALIDER, "renvoyer en cours");
+        if (ticketsEnCoursDuResponsable >= MAX_TICKETS_EN_COURS) {
+            throw new OperationRefuseeException(assigne.getPrenom() + " a déjà "
+                    + MAX_TICKETS_EN_COURS + " tickets en cours.");
+        }
         statut = Statut.EN_COURS;
     }
 
@@ -99,12 +103,6 @@ public class Ticket {
     private void verifierModificationPossible() {
         if (statut == Statut.TERMINE) {
             throw new OperationRefuseeException("Impossible de modifier le ticket #" + id + " car son statut est déjà à 'terminé'");
-        }
-    }
-
-    private void verifierNombreTicket(long ticketsAssignes, Collaborateur programmeur) {
-        if (ticketsAssignes > MAX_TICKETS_EN_COURS) {
-            throw new OperationRefuseeException("Le programmeur " +  programmeur.getPrenom() + "a déjà 3 tickets");
         }
     }
 

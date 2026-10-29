@@ -351,7 +351,11 @@ public class CollaborateurService {
         return transactionAvecResultat(em -> {
             Ticket ticket = ticketExistant(em, idTicket);
             Collaborateur valideur = collaborateurExistant(em, identifiantTesteur);
-            ticket.renvoyer(valideur);
+            long enCours = 0;
+            if (ticket.getAssigne() != null) {
+                enCours = compterTicketsEnCours(em, ticket.getAssigne());
+            }
+            ticket.renvoyer(valideur, enCours);
             logger.info("Ticket {} renvoyé en cours par {}", idTicket, identifiantTesteur);
             return ticket;
         });
