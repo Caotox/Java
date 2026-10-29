@@ -159,10 +159,10 @@ public class HelloEfrei {
         System.out.println("18. Assigner un ticket à un programmeur");
         System.out.println("19. Démarrer un ticket");
         System.out.println("20. Soumettre un ticket à validation");
-        System.out.println("22. Valider ou renvoyer un ticket (testeur)");
-        System.out.println("23. Supprimer un ticket");
-        System.out.println("24. Modifier le titre d'une ticket");
-        System.out.println("25. Modifier la priorite d'une ticket");
+        System.out.println("21. Valider ou renvoyer un ticket (testeur)");
+        System.out.println("22. Supprimer un ticket");
+        System.out.println("23. Modifier le titre d'une ticket");
+        System.out.println("24. Modifier la priorite d'une ticket");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
