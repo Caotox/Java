@@ -428,7 +428,13 @@ public class HelloEfrei {
         System.out.println("Par quel titre voulez-vous le remplacer");
         String nouveauTitre = scanner.nextLine();
         if (nouveauTitre == null) return;
-        service.modifierTitreTicket(id, nouveauTitre);
+        try {
+            service.modifierTitreTicket(id, nouveauTitre);
+            System.out.println("Titre modifié avec succès ! ");
+        } catch (OperationRefuseeException e) {
+            System.out.println("Modification refusée: " + e.getMessage());
+        }
+
     }
 
     private static void modifierPrioriteTicket(Scanner scanner, CollaborateurService service) {
