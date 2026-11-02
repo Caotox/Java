@@ -97,6 +97,7 @@ public class HelloEfrei {
                     case 23 -> modifierTitreTicket(scanner, service);
                     case 24 -> modifierPrioriteTicket(scanner, service);
                     case 25 -> repartirTickets(service);
+                    case 26 -> tableauDeBord(service);
                     case 27 -> reAssignerTickets(service);
                     default -> System.out.println("Option invalide. Choisissez entre 0 et 24.");
                 }
@@ -168,7 +169,8 @@ public class HelloEfrei {
         System.out.println("23. Modifier le titre d'une ticket");
         System.out.println("24. Modifier la priorite d'une ticket");
         System.out.println("25. Reperer le travail a repartir");
-        System.out.println("26. Re assigner les tickets");
+        System.out.println("26. Afficher le tableau de bord");
+        System.out.println("27. Re assigner les tickets");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -491,6 +493,31 @@ public class HelloEfrei {
         } else {
             System.out.println("Tickets a repartir : " + tickets.size() );
             tickets.forEach(System.out::println);
+        }
+    }
+
+    private static void tableauDeBord(CollaborateurService service) {
+        List<Ticket> ticketsEnCours = service.consulterTicketByStatut(Statut.EN_COURS);
+        List<Ticket> ticketsAFaire = service.consulterTicketByStatut(Statut.A_FAIRE);
+        List<Ticket> ticketsAValider = service.consulterTicketByStatut(Statut.A_VALIDER);
+        List<Ticket> ticketsTermines = service.consulterTicketByStatut(Statut.TERMINE);
+        System.out.println("-------------------------");
+        System.out.println("| Tickets a faire   | " + ticketsAFaire.size() + " |");
+        System.out.println("| Tickets en cours  | " + ticketsEnCours.size() + " |");
+        System.out.println("| Tickets a valider | " + ticketsAValider.size() + " |");
+        System.out.println("| Tickets termines  | " + ticketsTermines.size() + " |");
+        System.out.println("-------------------------");
+
+        List<Programmeur> programmeurs = service.programmeurs();
+        for (Programmeur programmeur : programmeurs) {
+            List<Ticket> ticketParProgrammeur = service.consulterTicketByProgrammeur(programmeur.getIdentifiant());
+            int chargeProgrammeur = 0;
+            for (Ticket ticket : ticketParProgrammeur) {
+                if (ticket.getStatut() == Statut.EN_COURS) {
+                    chargeProgrammeur++;
+                }
+            }
+            System.out.println("| Charge du Programmeur | " + programmeur.getPrenom() + " | " + chargeProgrammeur + " | ");
         }
     }
     private static void reAssignerTickets(CollaborateurService service) {
