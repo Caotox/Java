@@ -90,8 +90,6 @@ La classe Ticket possède les méthodes de changement du statut d'un ticket, dan
 
 Ces méthodes vont être appelées par la Classe CollaborateurService.
 
-TODO : ANTOINE FINIR
-
 ### Validation d'un Ticket
 
 Règle 2 : un ticket « À valider » peut passer à « Terminé » ou être renvoyé « En cours ». Aucune transition n’est possible depuis « Terminé ».
@@ -120,6 +118,13 @@ l'opération est refusée et rien n'est modifié.
 Un ticket ne peut être supprimé que s'il est encore `A_FAIRE`, afin de conserver l'historique du travail commencé (règle 8). `Ticket.verifierSuppressionPossible()` porte la règle, et le service appelle ensuite `em.remove(ticket)` dans la même
 transaction. 
 Un ticket inexistant ou déjà commencé est refusé avec un message clair.
+
+### Repérer le travail à répartir
+
+La méthode sera appelée depuis HelloEfrei. Cette méthode va s'occuper de l'affichage, tandis que la méthode dans le Service récupèrera les données.
+- Affichage : HelloEfrei
+- Récupération, filtrage, tri : Service
+La méthode appelée depuis HelloEfrei va aussi gérer le cas où aucun Ticket n'est pas assigné, puisqu'elle récupère une Liste de Tickets renvoyée directement par la méthode du Service. Dans ce cas, si aucun Ticket n'est pas assigné (donc si la liste renvoyée par le Service est vide), on affiche un message adapté ("Tous les tickets ont déjà été assignés).
 
 ## 3. Décisions Techniques
 ### Décision 1 — Les règles métier vivent dans `Ticket`, le service orchestre
