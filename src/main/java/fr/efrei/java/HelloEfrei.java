@@ -487,6 +487,7 @@ public class HelloEfrei {
         if (tickets.isEmpty()) {
             System.out.println("Aucun ticket a prendre en charge");
         } else {
+            System.out.println("Tickets a repartir : " + tickets.size() );
             tickets.forEach(System.out::println);
         }
     }
