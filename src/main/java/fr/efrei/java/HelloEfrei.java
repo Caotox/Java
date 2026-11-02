@@ -96,6 +96,7 @@ public class HelloEfrei {
                     case 22 -> supprimerTicket(scanner, service);
                     case 23 -> modifierTitreTicket(scanner, service);
                     case 24 -> modifierPrioriteTicket(scanner, service);
+                    case 25 -> repartirTickets(service);
                     default -> System.out.println("Option invalide. Choisissez entre 0 et 24.");
                 }
 
@@ -165,6 +166,7 @@ public class HelloEfrei {
         System.out.println("22. Supprimer un ticket");
         System.out.println("23. Modifier le titre d'une ticket");
         System.out.println("24. Modifier la priorite d'une ticket");
+        System.out.println("25. Reperer le travail a repartir");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -477,6 +479,15 @@ public class HelloEfrei {
             System.out.println("Priorité modifiée : " + ticket);
         } catch (OperationRefuseeException | IllegalArgumentException e) {
             System.out.println("Refusé : " + e.getMessage());
+        }
+    }
+
+    private static void repartirTickets(CollaborateurService service) {
+        List<Ticket> tickets = service.repartirTickets();
+        if (tickets.isEmpty()) {
+            System.out.println("Aucun ticket a prendre en charge");
+        } else {
+            tickets.forEach(System.out::println);
         }
     }
 }

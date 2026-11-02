@@ -460,4 +460,13 @@ public class CollaborateurService {
             return ticket.size();
         });
     }
+
+    public List<Ticket> repartirTickets() {
+        try (EntityManager em = fabrique.createEntityManager()) {
+            return em.createQuery(
+                            "select t from Ticket t where t.assigne is null order by t.priorite, t.id",
+                            Ticket.class)
+                    .getResultList();
+        }
+    }
 }
