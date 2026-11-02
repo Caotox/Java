@@ -124,6 +124,7 @@ Un ticket inexistant ou déjà commencé est refusé avec un message clair.
 La méthode sera appelée depuis HelloEfrei. Cette méthode va s'occuper de l'affichage, tandis que la méthode dans le Service récupèrera les données, et va s'occuper du filtre (récupérer seulement les tickets non assignés) et du tri (priorité de la plus haute à la plus basse, puis par numéro du plus petit au plus grand).
 - Affichage : HelloEfrei
 - Récupération, filtrage, tri : Service
+
 La méthode appelée depuis HelloEfrei va aussi gérer le cas où aucun Ticket n'est pas assigné, puisqu'elle récupère une Liste de Tickets renvoyée directement par la méthode du Service. Dans ce cas, si aucun Ticket n'est pas assigné (donc si la liste renvoyée par le Service est vide), on affiche un message adapté (`Aucun ticket a prendre en charge`).
 
 ## 3. Décisions Techniques
@@ -141,6 +142,23 @@ La méthode appelée depuis HelloEfrei va aussi gérer le cas où aucun Ticket n
 - Tout refus lève une `OperationRefuseeException` : la transaction est **annulée (rollback)**, une opération refusée ne modifie jamais les données (règle 9).
 - La console attrape ces exceptions et affiche un message clair.
 - **Pourquoi :** cohérence garantie, et mécanisme déjà vu au TP4.
+
+### Décision 3 - 
+Dans HelloEfrei on a par exemple :
+```
+private static void demarrerTicket(Scanner scanner, CollaborateurService service) {
+Long id = lireNumeroTicket(scanner);
+if (id == null) return;
+try {
+System.out.println("Ticket démarré : " + service.demarrerTicket(id));
+} catch (OperationRefuseeException e) {
+System.out.println("Refusé : " + e.getMessage());
+}
+}
+```
+
+Ici, nous avons fait un choix pour le if (id == null) return;
+L'idée ici, est de renvoyer vers le menu si la saisie de l'utilisateur est vide. La décision qui a été prise est de dire qu'une telle opération (id null choisi par l'utilisateur) vient d'un choix conscient, et non pas d'une règle métier qui n'a pas été respectée. Imaginons par exemple que l'utilisateur séléctionne la mauvaise section du menu. Il va alloir faire "Enter" lors du choix de saisie, le `return;` le renverra alors vers le menu une nouvelle fois. Au lieu de throw une potentielle Exception qui sera catch, ou d'afficher un message d'erreur, on renvoie vers le menu, car ce comportement ne viole pas les règles métiers, et n'est pas pertinente pour une éventuelle opération de maintenance future.
 
 ## 4. Etat du Projet
 ### Ce qui fonctionne
