@@ -469,4 +469,32 @@ public class CollaborateurService {
                     .getResultList();
         }
     }
+    public int reassignerTicketsAFaire(String identifiantSource, String identifiantCible) {
+        if (identifiantSource.equals(identifiantCible)) {
+            throw new OperationRefuseeException("Le programmeur source et le programmeur cible sont identiques.");
+        }
+        return transactionAvecResultat(em -> {
+            Collaborateur source = collaborateurExistant(em, identifiantSource);
+            Collaborateur cible  = collaborateurExistant(em, identifiantCible);
+
+            if (!cible.isProgrammeur()) {
+                throw new OperationRefuseeException(cible.getPrenom()
+                        + " n'est pas programmeur : impossible de lui réassigner des tickets.");
+            }
+
+            List<Ticket> aReassigner = em.createQuery(
+                            "select t from Ticket t where t.assigne = :source and t.statut = :statut order by t.id",
+                            Ticket.class)
+                    .setParameter("source", source)
+                    .setParameter("statut", Statut.A_FAIRE)
+                    .getResultList();
+
+            for (Ticket ticket : aReassigner) {
+                ticket.assigner(cible);
+            }
+
+            logger.info(aReassigner.size() + " ticket(s) réassigné(s) de " + identifiantSource +  " à " +  identifiantCible);
+            return aReassigner.size();
+        });
+    }
 }

@@ -97,6 +97,7 @@ public class HelloEfrei {
                     case 23 -> modifierTitreTicket(scanner, service);
                     case 24 -> modifierPrioriteTicket(scanner, service);
                     case 25 -> repartirTickets(service);
+                    case 27 -> reAssignerTickets(service);
                     default -> System.out.println("Option invalide. Choisissez entre 0 et 24.");
                 }
 
@@ -167,6 +168,7 @@ public class HelloEfrei {
         System.out.println("23. Modifier le titre d'une ticket");
         System.out.println("24. Modifier la priorite d'une ticket");
         System.out.println("25. Reperer le travail a repartir");
+        System.out.println("26. Re assigner les tickets");
         System.out.println("0. Quitter");
         System.out.print("Votre choix : ");
     }
@@ -489,6 +491,23 @@ public class HelloEfrei {
         } else {
             System.out.println("Tickets a repartir : " + tickets.size() );
             tickets.forEach(System.out::println);
+        }
+    }
+    private static void reAssignerTickets(CollaborateurService service) {
+        Scanner  scanner = new Scanner(System.in);
+        System.out.println("Identifiant du programmeur qui quitte le projet : ");
+        String source = scanner.next();
+        scanner.nextLine();
+        System.out.println("Identifiant du programmeur qui reprend ses tickets : ");
+        String cible = scanner.next();
+        scanner.nextLine();
+        try {
+            int nbTickets = service.reassignerTicketsAFaire(source, cible);
+            System.out.println(nbTickets == 0
+                    ? "Aucun ticket « À faire » à réassigner pour " + source + "."
+                    : nbTickets + " ticket(s) réassigné(s) à " + cible + ".");
+        } catch (OperationRefuseeException e) {
+            System.out.println("Refusé : " + e.getMessage());
         }
     }
 }
