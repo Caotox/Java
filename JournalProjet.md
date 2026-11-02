@@ -90,6 +90,8 @@ La classe Ticket possède les méthodes de changement du statut d'un ticket, dan
 
 Ces méthodes vont être appelées par la Classe CollaborateurService.
 
+TODO : ANTOINE FINIR
+
 ### Validation d'un Ticket
 
 Règle 2 : un ticket « À valider » peut passer à « Terminé » ou être renvoyé « En cours ». Aucune transition n’est possible depuis « Terminé ».
@@ -176,7 +178,7 @@ Les paramètres sont dans `src/main/resources/META-INF/persistence.xml` (propri�
 |---------------|-----|-------------|--------------|
 | **MAMP** | `jdbc:mariadb://localhost:8889/efrei_tp4` | `root` | `root` |
 | **WAMP** | `jdbc:mariadb://localhost:3306/efrei_tp4` | `root` | *(vide)* |
-| XAMPP | `jdbc:mariadb://localhost:3306/efrei_tp4` | `root` | *(vide)* |
+| **XAMPP** | `jdbc:mariadb://localhost:3306/efrei_tp4` | `root` | *(vide)* |
 
 > Le port MAMP (8889) est celui de notre configuration ; si votre MAMP utilise un autre port, il s'affiche sur sa page d'accueil. Sous WAMP, le port peut être 3307 si un autre MySQL est déjà installé. Dans tous les cas, **l'URL doit pointer vers le port de votre serveur**.
 > Le fichier fourni est réglé pour **WAMP/XAMPP** : `jdbc:mariadb://localhost:3306/efrei_tp4`, utilisateur `root`, mot de passe vide. Pour MAMP, remplacer le port par 8889 et le mot de passe par `root` (voir le tableau ci-dessus).

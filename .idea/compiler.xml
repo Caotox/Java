@@ -10,10 +10,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="JavaTP" />
+        <module name="tp4-collaborateurs" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="tp4-collaborateurs" target="16" />
       <module name="tp4-collaborateurs (1) (fr.efrei)" target="21" />
     </bytecodeTargetLevel>
   </component>
