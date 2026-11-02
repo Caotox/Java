@@ -65,7 +65,7 @@ Elles s'appuient sur le même principe que les requêtes du TP4 (`salaireSuperie
 Pour les tickets d'un collaborateur, le service vérifie d'abord que le collaborateur existe (sinon l'opération est refusée avec un message clair). Quand aucun ticket ne correspond, un message explicatif apparaît.
 
 ### Assigner un Ticket
-L'assignation est faite dans une seule transaction : le ticket et le collaborateur sont chargés avec le même `EntityManager`, ce qui permet à JPA d'enregistrer la modification du ticket au commit (comme l'augmentation de salaire du TP4). L'association `assigne` est un `@ManyToOne` unidirectionnel, sans cascade : la colonne `assigne_id` contient
+L'assignation est faite dans une seule transaction : le ticket et le collaborateur sont chargés avec le même `EntityManager`, ce qui permet à Hibernate d'enregistrer la modification du ticket au commit (comme l'augmentation de salaire du TP4). L'association `assigne` est un `@ManyToOne` unidirectionnel, sans cascade : la colonne `assigne_id` contient
 l'identifiant du collaborateur, qui doit déjà être en base.
 Pour assigner un ticket, il faut dans un premier de vérifier que le responsable est bien un Programmeur. Il faut également vérifier que le statut du ticket est ``A_FAIRE``.
 Pour chacunes de ces vérifications, un exception est lancée et la transaction est annulée : l'opération refusée ne modifie pas les données.
