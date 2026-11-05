@@ -1,5 +1,13 @@
 package fr.efrei.java;
 
+import fr.efrei.java.demo.DonneesDemo;
+import fr.efrei.java.enums.Priorite;
+import fr.efrei.java.enums.Statut;
+import fr.efrei.java.exceptions.CollaborateurDejaExistantException;
+import fr.efrei.java.exceptions.OperationRefuseeException;
+import fr.efrei.java.exceptions.TicketDejaExistantException;
+import fr.efrei.java.model.*;
+import fr.efrei.java.service.CollaborateurService;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
@@ -99,7 +107,7 @@ public class HelloEfrei {
                     case 25 -> repartirTickets(service);
                     case 26 -> tableauDeBord(service);
                     case 27 -> reAssignerTickets(service);
-                    default -> System.out.println("Option invalide. Choisissez entre 0 et 24.");
+                    default -> System.out.println("Option invalide. Choisissez entre 0 et 27.");
                 }
 
             } else {
@@ -407,7 +415,7 @@ public class HelloEfrei {
             }
         };
         if (tickets == null) {
-            System.out.println("Statut invalide : choisissez 1, 2 ou 3.");
+            System.out.println("Statut invalide : choisissez 1, 2, 3 ou 4.");
             return;
         }
 

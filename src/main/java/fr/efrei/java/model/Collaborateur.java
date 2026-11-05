@@ -1,5 +1,6 @@
-package fr.efrei.java;
+package fr.efrei.java.model;
 
+import fr.efrei.java.util.Validation;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;

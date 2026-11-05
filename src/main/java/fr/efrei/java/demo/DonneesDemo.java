@@ -1,4 +1,7 @@
-package fr.efrei.java;
+package fr.efrei.java.demo;
+
+import fr.efrei.java.enums.Priorite;
+import fr.efrei.java.model.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,10 @@
-package fr.efrei.java;
+package fr.efrei.java.plusutiles;
+
+import fr.efrei.java.demo.DonneesDemo;
+import fr.efrei.java.model.Adresse;
+import fr.efrei.java.model.Collaborateur;
+import fr.efrei.java.model.Programmeur;
+import fr.efrei.java.model.Testeur;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +37,7 @@ public class ExplorationsCollections {
     // =========================================================================
 
     /**
-     * Démontre l'utilisation de ArrayList<fr.efrei.java.Collaborateur> :
+     * Démontre l'utilisation de ArrayList<fr.efrei.java.model.Collaborateur> :
      *   - La généricité garantit la cohérence du type à la COMPILATION.
      *   - Pas de cast explicite lors de la récupération d'un élément.
      *   - Parcours avec for-each (Iterable).
@@ -41,7 +47,7 @@ public class ExplorationsCollections {
 
         Adresse adresse = new Adresse("12 rue des Lilas", "75000", "Paris", "France");
 
-        // List<fr.efrei.java.Collaborateur> : seuls des fr.efrei.java.Collaborateur peuvent être ajoutés
+        // List<fr.efrei.java.model.Collaborateur> : seuls des fr.efrei.java.model.Collaborateur peuvent être ajoutés
         // Vérification à la COMPILATION, pas uniquement à l'exécution (contrairement aux tableaux bruts)
         List<Collaborateur> equipe = new ArrayList<>();
         equipe.add(new Programmeur("T001", "Alice", "Martin", 42000, adresse, "Java"));
@@ -53,7 +59,7 @@ public class ExplorationsCollections {
 
         System.out.println("Taille de la liste : " + equipe.size());
 
-        // Parcours for-each : le type de chaque élément est garanti fr.efrei.java.Collaborateur
+        // Parcours for-each : le type de chaque élément est garanti fr.efrei.java.model.Collaborateur
         System.out.println("Membres de l'équipe :");
         for (Collaborateur c : equipe) {
             System.out.println("  - " + c);
@@ -242,7 +248,7 @@ public class ExplorationsCollections {
         System.out.println("Insertion dans l'ordre : B, A, C, Z, M");
         System.out.println("HashMap       (ordre indéterminé)   : " + hashMap.keySet());
         System.out.println("LinkedHashMap (ordre d'insertion)   : " + linkedMap.keySet());
-        System.out.println("=> L'fr.efrei.java.Annuaire utilise LinkedHashMap pour préserver l'ordre de saisie.");
+        System.out.println("=> L'fr.efrei.java.plusutiles.Annuaire utilise LinkedHashMap pour préserver l'ordre de saisie.");
         System.out.println();
     }
 }

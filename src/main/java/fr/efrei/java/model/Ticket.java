@@ -1,5 +1,9 @@
-package fr.efrei.java;
+package fr.efrei.java.model;
 
+import fr.efrei.java.exceptions.OperationRefuseeException;
+import fr.efrei.java.enums.Priorite;
+import fr.efrei.java.enums.Statut;
+import fr.efrei.java.util.Validation;
 import jakarta.persistence.*;
 
 @Entity

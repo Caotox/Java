@@ -1,4 +1,4 @@
-package fr.efrei.java;
+package fr.efrei.java.enums;
 
 public enum Priorite {
     BASSE,

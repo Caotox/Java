@@ -1,5 +1,7 @@
-package fr.efrei.java;
+package fr.efrei.java.model;
 
+import fr.efrei.java.util.Validation;
+import fr.efrei.java.plusutiles.Formateur;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -30,7 +32,7 @@ public class Programmeur extends Collaborateur implements Formateur {
 
     @Override
     public String getMetier() {
-        return "fr.efrei.java.Programmeur (" + langagePrefere + ")";
+        return "fr.efrei.java.model.Programmeur (" + langagePrefere + ")";
     }
 
     @Override

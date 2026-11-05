@@ -1,4 +1,4 @@
-package fr.efrei.java;
+package fr.efrei.java.model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -22,7 +22,7 @@ public class Testeur extends Collaborateur {
 
     @Override
     public String getMetier() {
-        return "fr.efrei.java.Testeur";
+        return "fr.efrei.java.model.Testeur";
     }
 
     @Override

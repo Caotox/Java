@@ -1,5 +1,12 @@
-package fr.efrei.java;
+package fr.efrei.java.service;
 
+import fr.efrei.java.exceptions.CollaborateurDejaExistantException;
+import fr.efrei.java.exceptions.OperationRefuseeException;
+import fr.efrei.java.enums.Priorite;
+import fr.efrei.java.enums.Statut;
+import fr.efrei.java.model.Collaborateur;
+import fr.efrei.java.model.Programmeur;
+import fr.efrei.java.model.Ticket;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;

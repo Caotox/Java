@@ -1,4 +1,4 @@
-package fr.efrei.java;
+package fr.efrei.java.plusutiles;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

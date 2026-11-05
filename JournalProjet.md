@@ -141,7 +141,7 @@ La méthode appelée depuis HelloEfrei va aussi gérer le cas où aucun Ticket n
 - Chaque opération (assigner, démarrer, valider, supprimer…) charge **le ticket et le collaborateur avec le même `EntityManager`**, dans une seule transaction. L'association `assigne` est un `@ManyToOne` unidirectionnel **sans cascade** ; le collaborateur doit déjà exister en base.
 - Tout refus lève une `OperationRefuseeException` : la transaction est **annulée (rollback)**, une opération refusée ne modifie jamais les données (règle 9).
 - La console attrape ces exceptions et affiche un message clair.
-- **Pourquoi :** cohérence garantie, et mécanisme déjà vu au TP4.
+- **Pourquoi :** cohérence garantie, et mécanisme déjà vu au TP4 et nous travaillons uniquement avec une base de données.
 
 ### Décision 3 - 
 Dans HelloEfrei on a par exemple :
@@ -188,7 +188,28 @@ La liste des tickets à répartir et les bonus (tableau de bord, réassignation 
 | 7 | Sur un ticket « Terminé » : modifier le titre, le réassigner. Supprimer un ticket « En cours », puis un ticket « À faire ». | Modification, réassignation et première suppression refusées ; la seconde suppression est acceptée. | **OK** :<br>**Modification du titre d'un ticket terminé** : `Modification refusée: Impossible de modifier le ticket #11 car son statut est déjà à 'terminé'.`<br>**Suppression d'un ticket EN_COURS** : `Refusé : Le ticket #9 est EN_COURS : seul un ticket A_FAIRE peut être supprimé.` `[main] WARN fr.efrei.java.CollaborateurService - Transaction annulée (rollback) : Le ticket #9 est EN_COURS : seul un ticket A_FAIRE peut être supprimé.`<br>**Suppression d'un ticket A_FAIRE** : `Ticket #3 supprimé.` `[main] INFO fr.efrei.java.CollaborateurService - Ticket 3 supprimé` |
 | 8 | Arrêter puis relancer l'application ; utiliser un ticket ou un collaborateur inexistant ; saisir du texte quand un nombre est attendu. | Tickets, statuts et assignations retrouvés ; message clair, l'application ne plante pas. | **OK** : Les données sont restaurées, `Saisie invalide. Veuillez entrer un nombre`, et l'application ne plante pas. |
 | 9 | Afficher les tickets à répartir. | Non assignés, HAUTE → BASSE puis par numéro ; message clair si aucun. | **OK** : Tickets non assignés renvoyés et triés par priorité (de la plus haute à la plus basse) puis par numéro (du plus petit au plus grand). Si tous les tickets ont été assignés, on affiche un message adapté `Aucun ticket a prendre en charge` |
-## 7. README — Lancer et essayer l'application
+
+## 7. Limites du projet
+
+### Limite 1 : Optional
+Dans notre service, nous avons des conditions : 
+``if (identifiantProgrammeur == null || identifiantProgrammeur.isBlank()) ``
+A la place de ces conditions nous aurions pu utiliser ``Optional`` avec ``ofNullable(...).filter(...).orElseThrow(...)``
+mais le résultat aurait été équivalent sans gain de lisibilité. L’utiliser réellement aurait en plus nécessité de modifier les signatures du CollaborateurService, les appels depuis HelloEfrei et les données de démonstration.
+
+### Limite 2 : .getMessage()
+
+Il nous a été fait remarquer que l’usage de System.out.println et de e.getMessage() dans nos blocs try/catch était un choix questionable. 
+Nous avons maintenu ce choix car ces blocs se trouvent dans HelloEfrei, qui constitue la couche interface de notre application console : l’affichage y est sa fonction. 
+Le CollaborateurService ne fait aucun affichage, il lève des exceptions et journalise, et c’est l’interface qui les convertit en messages pour l’utilisateur. Nous n’affichons getMessage() que pour nos propres exceptions (OperationRefuseeException, IllegalArgumentException issue de Validation), 
+dont nous maîtrisons le texte. Pour les exceptions techniques comme NumberFormatException, nous affichons au contraire un message dédié, car celui du JDK n’est pas adapté à l’utilisateur. 
+Nous reconnaissons toutefois qu’un vrai déploiement devrait ajouter un logger.error(..., e) pour conserver la stack trace des erreurs inattendues.
+
+### Limite 3 : .close()
+Chaque EntityManager est ouvert dans un try-with-resources, ce qui garantit sa fermeture automatique exactement une fois, même en cas d’exception, sans appel manuel à close(). 
+L’EntityManagerFactory, coûteuse à créer, est instanciée une seule fois pour toute l’application et fermée à la sortie du programme.
+
+## 8. README — Lancer et essayer l'application
 
 ### Prérequis
 - JDK 21, Maven 3.9+

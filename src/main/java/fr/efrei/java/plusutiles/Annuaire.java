@@ -1,5 +1,8 @@
-package fr.efrei.java;
+package fr.efrei.java.plusutiles;
 
+import fr.efrei.java.exceptions.CollaborateurDejaExistantException;
+import fr.efrei.java.model.Collaborateur;
+import fr.efrei.java.model.Programmeur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

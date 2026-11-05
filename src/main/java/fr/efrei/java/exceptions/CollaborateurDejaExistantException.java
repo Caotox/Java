@@ -1,4 +1,4 @@
-package fr.efrei.java;
+package fr.efrei.java.exceptions;
 
 public class CollaborateurDejaExistantException extends RuntimeException {
     private final String identifiant;

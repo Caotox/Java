@@ -1,4 +1,4 @@
-package fr.efrei.java;
+package fr.efrei.java.exceptions;
 
 // Quand une règle de gestion refuse l'opération demandée
 public class OperationRefuseeException extends RuntimeException {
