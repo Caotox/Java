@@ -36,7 +36,7 @@ Nous nous organisions avec des pushs réguliers de notre travail avec des messag
 **Ce qui est nouveau :**  L'entité `Ticket` (squelette fourni, complété), les enums `Priorite` et `Statut` , les règles du cycle de vie, les requêtes de consultation, la liste des tickets à répartir et
 les options de menu 14 à 25.
 
-### Pour charger les données nécéssaires aux tests, veuillez choisir l'option 11 du menu.
+### Pour charger les données nécéssaires aux tests, veuillez choisir l'option 4 du menu (Outils) puis l'option 1 (Charger les données de démonstration)
 
 ## 2. Implémentation : 
 Nous avons commencé par la création de l'Entité Ticket. Un premier Squelette avait été fourni pour le projet. Voici donc les colonnes que nous avons décidé d'attribuer à l'entité, leurs caractéristiques, ainsi que la raison de ces choix.
@@ -249,7 +249,7 @@ mvn compile exec:java
 (ou lancer `HelloEfrei` depuis IntelliJ).
 
 ### A Faire pour gérer les tickets
-1. Menu **11** : charger les données de démonstration (collaborateurs et tickets ; rejouable sans doublon).
+1. Pour charger les données nécéssaires aux tests, veuillez choisir l'option 4 du menu (Outils) puis l'option 1 (Charger les données de démonstration)
 2. Menu **15** : consulter tous les tickets (10 tickets, 4 statuts).
 3. Faire les tests nécéssaires pour vérifier le bon fonctionnement de l'application
 
