@@ -27,6 +27,8 @@ public class CollaborateurService {
         this.fabrique = fabrique;
     }
 
+    // Écrit une seule fois le schéma begin / commit / rollback pour toutes les écritures.
+    // L'appelant passe juste le « travail » sous forme de lambda : em -> { ... }
     private <T> T transactionAvecResultat(Function<EntityManager, T> travail) {
         try (EntityManager em = fabrique.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
@@ -52,7 +54,7 @@ public class CollaborateurService {
         });
     }
 
-//    public void ajouterUnCollaborateur(Collaborateur collaborateur) {
+    //    public void ajouterUnCollaborateur(Collaborateur collaborateur) {
 //        // try (...) : l'EntityManager est fermé automatiquement à la fin du bloc
 //        try (EntityManager em = fabrique.createEntityManager()) {
 //
@@ -176,6 +178,8 @@ public class CollaborateurService {
                 return null;
             }
 
+            // Pas besoin de persist : l'objet a été chargé dans cette transaction,
+            // JPA détecte la modification et l'enregistre tout seul au commit.
             // 7.3 : commenter
             collaborateur.augmenterSalaire(pourcentage);
 
@@ -440,6 +444,8 @@ public class CollaborateurService {
             Collaborateur emma  = collaborateurExistant(em, "C005");
             Collaborateur bob   = collaborateurExistant(em, "C002");
 
+            // Les index correspondent à l'ordre de DonneesDemo.creerTickets().
+            // On passe par les vraies méthodes métier pour obtenir des états cohérents.
             ticket.get(3).assigner(alice);
 
             ticket.get(4).assigner(alice);

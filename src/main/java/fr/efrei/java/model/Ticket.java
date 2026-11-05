@@ -6,6 +6,8 @@ import fr.efrei.java.enums.Statut;
 import fr.efrei.java.util.Validation;
 import jakarta.persistence.*;
 
+// Le ticket porte lui-même ses règles métier (statuts, assignation, limite de charge) :
+// le service charge le ticket et appelle la bonne méthode, la règle n'est écrite qu'ici.
 @Entity
 @Table(name = "ticket")
 public class Ticket {
@@ -18,6 +20,8 @@ public class Ticket {
 
     private String titre;
 
+    // STRING : on stocke "HAUTE" en base plutôt qu'un numéro, plus lisible et sans risque
+    // de décalage si on ajoute une valeur à l'enum
     @Enumerated(EnumType.STRING)
     private Priorite priorite;
 
@@ -69,6 +73,7 @@ public class Ticket {
         statut = Statut.TERMINE;
     }
 
+    // Renvoyer remet le ticket EN_COURS : on revérifie donc la limite de charge du programmeur
     public void renvoyer(Collaborateur valideur, long ticketsEnCoursDuResponsable) {
         verifierValideur(valideur);
         verifierStatut(Statut.A_VALIDER, "renvoyer en cours");

@@ -1,5 +1,13 @@
 # ***Journal Projet Final EL OSTA Marine et ROQC Antoine***
 
+## REFONTE DU MENU PAR RAPPORT AU TP4
+
+Après la réalisation de ce Projet, le menu principal affichait 27 options sur un seul écran, mélangeant consultation, gestion, cycle de vie des tickets et outils de test. Il devenait difficile à lire et à utiliser, ce qui va à l'encontre même de ce qui nous avait poussé initalement à fonctionner sur la base d'un tel menu.
+
+Nous l’avons réorganisé en deux niveaux. Le menu principal ne propose plus que 4 sections : Collaborateurs, Tickets, Avancement des tickets et Outils. Chacune ouvre un sous-menu dédié. Chaque sous-menu boucle jusqu’au choix « 0. Retour », ce qui permet d’enchaîner plusieurs actions d’une même section. La section « Avancement » regroupe le cycle de vie d’un ticket (À faire → En cours → À valider → Terminé) et le tableau de bord.
+
+La lecture du choix a été centralisée dans une méthode lireChoix. Elle lit une ligne complète avant de la convertir, ce qui évite le problème de nextInt() qui laisse le retour à la ligne dans le Scanner. L'idée est de découper au maximum le code et les fonctionnalités, là où une méthode peut être réutilisée autre part. Les fonctionnalités et les règles métier sont inchangées : seule la présentation du menu a évolué.
+
 ## 1. Démarche
 Pour ce projet, nous sommes partis de notre application du TP4. Notre Base de Données est donc nommée ```efrei_tp4```. Nous l'avons donc fait évoluer sans la réécrire.
 Pour bien se partager le travail, nous avons crée un dépôt Git, et avons identifier les besoins de l'application.
