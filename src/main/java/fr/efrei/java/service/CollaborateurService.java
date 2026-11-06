@@ -477,7 +477,14 @@ public class CollaborateurService {
     public List<Ticket> repartirTickets() {
         try (EntityManager em = fabrique.createEntityManager()) {
             return em.createQuery(
-                            "select t from Ticket t where t.assigne is null order by t.priorite, t.id",
+                            "select t from Ticket t "
+                                    + "where t.assigne is null "
+                                    + "order by case t.priorite "
+                                    + "    when fr.efrei.java.enums.Priorite.HAUTE   then 0 "
+                                    + "    when fr.efrei.java.enums.Priorite.NORMALE then 1 "
+                                    + "    when fr.efrei.java.enums.Priorite.BASSE   then 2 "
+                                    + "    else 3 "
+                                    + "end, t.id",
                             Ticket.class)
                     .getResultList();
         }
